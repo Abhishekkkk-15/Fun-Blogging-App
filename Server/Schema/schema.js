@@ -45,13 +45,25 @@ const postSchema = new Schema({
         ref:"User",
         required:true
     },
-    coverImages:{
+    coverImage:{
         type:String,
         required:true,
     },
-    categories:[{
-        type:Schema.Types.ObjectId,
-        ref:"Category",
+    Category:[{
+        type: String,
+        required: [true, "Category name is required."],
+        enum: {
+            values: ["Anime","Technology", "Health", "Education", "Entertainment", "Sports", "Lifestyle", "Science"],
+            message: "{VALUE} is not a valid category. Please select a predefined category."
+        }
+    }],
+    comments:[{
+        type:mongoose.Schema.ObjectId, 
+        ref:'Comment'
+    }],
+    likes:[{
+        type:mongoose.Schema.ObjectId, 
+        ref:'Like'
     }],
     createdAt:{
         type:Date,
@@ -82,11 +94,13 @@ const commentSchema = new Schema({
 })
 
 const categorySchema = new Schema({
-    name:{
-        type:String,
-        required:true,
-        unique:true,
-        trim:true
+    name: {
+        type: String,
+        required: [true, "Category name is required."],
+        enum: {
+            values: ["Anime","Technology", "Health", "Education", "Entertainment", "Sports", "Lifestyle", "Science"],
+            message: "{VALUE} is not a valid category. Please select a predefined category."
+        }
     },
     description:{
         type:String,
@@ -103,8 +117,12 @@ const likeSchema = new Schema({
     blog:{
         type:Schema.Types.ObjectId,
         ref:"Blog"
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
     }
-})
+}, { timestamps: true })
 
 const notificationSchema = new Schema({
     recipient:{

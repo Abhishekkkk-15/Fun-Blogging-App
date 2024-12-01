@@ -1,0 +1,59 @@
+/* src/components/BlogCard.css */
+
+/* Container for each blog card */
+.blog-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+  }
+  
+  /* Hover effect on the card */
+  .blog-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Image styling */
+  .blog-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  /* Information inside the card */
+  .blog-info {
+    padding: 15px;
+  }
+  
+  .blog-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .blog-author {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  .blog-comments {
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  .blog-comments p {
+    margin: 5px 0;
+  }
+  
+  /* Grid container for BlogList */
+  .blog-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  
