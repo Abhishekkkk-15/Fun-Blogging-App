@@ -49,6 +49,11 @@ const postSchema = new Schema({
         type:String,
         required:true,
     },
+    description:{
+        type:String,
+        maxlength :500,
+        required:true
+    },
     Category:[{
         type: String,
         required: [true, "Category name is required."],

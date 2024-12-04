@@ -2,6 +2,7 @@ import { config } from "dotenv";
 import uploadOnCloudinary from "../Middlewares/cloudinary.js";
 import { Blog, User, Comment, Like, Notification } from "../Schema/schema.js";
 import jwt from 'jsonwebtoken';
+
 config();
 
 // Register User
@@ -61,7 +62,7 @@ const loginUser = async (req, res) => {
             secure: process.env.NODE_ENV === 'production',
             maxAge: 3600000,
             sameSite: 'None',
-        }).json({ msg: "User Logged In!" });
+        }).json({ msg: "User Logged In!",data:user });
     } catch (error) {
         console.log(error);
         res.status(500).json({ msg: `Server Error: ${error.message}` });
@@ -136,7 +137,7 @@ const deleteUser = async (req, res) => {
 
 // Create Blog
 const createBlog = async (req, res) => {
-    const { title, category } = req.body;
+    const { title, category ,description} = req.body;
     const img = req.file?.path;
     const author = req.user.userId;
 
@@ -148,7 +149,8 @@ const createBlog = async (req, res) => {
             title,
             coverImage,
             author,
-            category
+            category,
+            description
         });
         await newPost.save();
         res.status(201).json({ msg: "Blog Created Successfully!" });
@@ -160,16 +162,16 @@ const createBlog = async (req, res) => {
 // Get All Blogs with Pagination
 const getAllBlogs = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query; // Default pagination parameters
+        const { page = 1, limit = 1 } = req.query; // Default pagination parameters
         const blogs = await Blog.find()
             .skip((page - 1) * limit) // Pagination logic
             .limit(parseInt(limit)) // Limit results
-            .populate('author','userName')
+            .populate('author','userName avatar')
             .populate({
                 path: 'comments',
                 populate: {
                     path: 'author',
-                    select: 'userName'
+                    select: 'userName avatar'
                 }
             })
             .populate({

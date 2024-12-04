@@ -3,12 +3,15 @@
 import axios from 'axios';
 
 // Set the base URL for the API
-axios.defaults.baseURL = 'http://localhost:8000';  // Replace with your backend URL
+axios.defaults.baseURL = 'http://localhost:8000/fun-blog';  // Replace with your backend URL
 
 // Example of API calls
 
 // Get all blogs
-export const getBlogs = () => axios.get('/fun-blog/all-blogs');
+export const getBlogs = (page,limit) => axios.get(
+    "/all-blogs",
+    { params: { page: page, limit: limit } }
+  );
 
 // Add a like to a blog
 export const addLike = (blogId) => axios.post(`/blog/${blogId}/like`, {}, { withCredentials: true });
@@ -21,3 +24,10 @@ export const getLikes = (blogId) => axios.get(`/blog/${blogId}/likes`);
 
 // Add a comment to a blog
 export const addComment = (blogId, content) => axios.post(`/fun-blog/addComment/${blogId}`, { content });
+
+
+//User Rotues 
+
+export const login = (userId,password) => axios.post('/login',{userId,password},{
+  withCredentials: true,
+})
