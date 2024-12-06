@@ -51,16 +51,16 @@ const postSchema = new Schema({
     },
     description:{
         type:String,
-        maxlength :500,
+        maxlength :2000,
         required:true
     },
     Category:[{
         type: String,
-        required: [true, "Category name is required."],
-        enum: {
-            values: ["Anime","Technology", "Health", "Education", "Entertainment", "Sports", "Lifestyle", "Science"],
-            message: "{VALUE} is not a valid category. Please select a predefined category."
-        }
+        required: [true, "Category name is required."]
+        // enum: {
+        //     values: ["quotes","Anime","Technology", "Health", "Education", "Entertainment", "Sports", "Lifestyle", "Science"],
+        //     message: "{VALUE} is not a valid category. Please select a predefined category."
+        // }
     }],
     comments:[{
         type:mongoose.Schema.ObjectId, 

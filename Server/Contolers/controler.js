@@ -2,8 +2,11 @@ import { config } from "dotenv";
 import uploadOnCloudinary from "../Middlewares/cloudinary.js";
 import { Blog, User, Comment, Like, Notification } from "../Schema/schema.js";
 import jwt from 'jsonwebtoken';
+import mongoose from "mongoose";
 
 config();
+
+
 
 // Register User
 const registerUser = async (req, res) => {
@@ -46,7 +49,9 @@ const loginUser = async (req, res) => {
             userId: user._id,
             email: user.email,
             isAdmin: user.isAdmin,
-            avatar: user.avatar
+            avatar: user.avatar,
+            bio:user.bio,
+            createdAt : user.createdAt
         }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
         const refreshToken = jwt.sign({
@@ -54,15 +59,19 @@ const loginUser = async (req, res) => {
             userId: user._id,
             email: user.email,
             isAdmin: user.isAdmin,
-            avatar: user.avatar
+            avatar: user.avatar,
+            bio:user.bio,
+            createdAt : user.createdAt
         }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
-        res.status(200).cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 3600000,
-            sameSite: 'None',
-        }).json({ msg: "User Logged In!",data:user });
+        res.status(200)
+        .cookie('accessToken', accessToken, {
+          httpOnly: true,
+          secure: "false", // Only secure in production
+          maxAge:  7 * 24 * 60 * 60 * 1000, // 7 day
+          sameSite: 'None', // Required for cross-origin cookies
+        })
+        .json({ msg: "User Logged In!", data: user });
     } catch (error) {
         console.log(error);
         res.status(500).json({ msg: `Server Error: ${error.message}` });
@@ -135,6 +144,20 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const getUserInfo = (req, res) => {
+    try {
+      const userInfo = req.user;
+  
+      if (!userInfo) {
+        return res.status(404).json({ message: "User information not found" });
+      }
+  
+      res.status(200).json({ userInfo });
+    } catch (error) {
+      res.status(500).json({ message: "Error retrieving user information", error });
+    }
+  };
+  
 // Create Blog
 const createBlog = async (req, res) => {
     const { title, category ,description} = req.body;
@@ -191,13 +214,36 @@ const getAllBlogs = async (req, res) => {
 
 // Get Single Blog
 const getBlog = async (req, res) => {
-    const { blogId } = req.body;
+    const { userId } = req.params;
     try {
-        const blog = await Blog.findById(blogId).populate('comments').populate('likes');
-        if (!blog) return res.status(404).json({ msg: "Blog Not Found!" });
+        // Validate and convert userId to ObjectId
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ msg: "Invalid userId provided." });
+        }
 
-        res.status(200).json({ msg: "Blog Found!", data: blog });
+        const objectId = new mongoose.Types.ObjectId(userId);
+
+        const blog = await Blog.find({ author: objectId })
+        .populate({
+            path: 'comments',
+            populate: {
+                path: 'author',
+                select: 'userName avatar'
+            }
+        })
+        .populate({
+            path: 'likes',
+            populate: {
+                path: 'user',
+                select: 'userName'
+            }
+        });
+
+        if (!blog.length) return res.status(404).json({ msg: "No blogs found for this author." });
+
+        res.status(200).json({ msg: "Blog(s) Found!", data: blog });
     } catch (error) {
+        // Handle any unexpected errors
         res.status(500).json({ msg: `Server Error: ${error.message}` });
     }
 };
@@ -407,5 +453,6 @@ export {
     addLike,
     removeLike,
     getLikes,
-    getNotification
+    getNotification,
+    getUserInfo
 };

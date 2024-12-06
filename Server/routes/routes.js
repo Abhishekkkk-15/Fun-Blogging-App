@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, logoutUser, getUserProfile, updateUserProfile, deleteUser, createBlog, getAllBlogs, getBlog, updateBlog, deleteBlog, addComment, removeComment, addLike, removeLike, getLikes, getNotification } from "../Contolers/controler.js";
+import { registerUser, loginUser, logoutUser,getUserInfo, getUserProfile, updateUserProfile, deleteUser, createBlog, getAllBlogs, getBlog, updateBlog, deleteBlog, addComment, removeComment, addLike, removeLike, getLikes, getNotification } from "../Contolers/controler.js";
 import { checkAuthenticaion } from "../Middlewares/authMiddleware.js";
 import multer from "multer";
 
@@ -10,14 +10,15 @@ const upload = multer({ dest: "uploads/" });
 router.post("/register", upload.single("avatar"), registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
-router.get("/profile", checkAuthenticaion, getUserProfile);
+router.get("/profile", getUserProfile);
 router.put("/profile/update", checkAuthenticaion, upload.single("avatar"), updateUserProfile);
 router.delete("/delete", checkAuthenticaion, deleteUser);
+router.post("/userinfo",checkAuthenticaion,getUserInfo)
 
 // Blog Routes
 router.post("/create-blog", checkAuthenticaion, upload.single("coverImage"), createBlog);
 router.get("/all-blogs", getAllBlogs);
-router.get("/blog/:blogId", getBlog);
+router.get("/blog/:userId", getBlog);
 router.put("/blog/update", checkAuthenticaion, updateBlog);
 router.delete("/blog/delete", checkAuthenticaion, deleteBlog);
 

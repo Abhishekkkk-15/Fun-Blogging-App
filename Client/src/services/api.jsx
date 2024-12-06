@@ -1,33 +1,33 @@
-// src/services/api.js
-
 import axios from 'axios';
 
 // Set the base URL for the API
-axios.defaults.baseURL = 'http://localhost:8000/fun-blog';  // Replace with your backend URL
+axios.defaults.baseURL = 'http://localhost:8000/fun-blog'; 
 
-// Example of API calls
-
-// Get all blogs
 export const getBlogs = (page,limit) => axios.get(
     "/all-blogs",
     { params: { page: page, limit: limit } }
   );
+export const getBlog = (userId) => axios.get(
+    `/blog/${userId}`,
+  );
+export const addNewPost = (data) => axios.post(
+    `/create-blog`
+  ,data,{ withCredentials: true });
 
-// Add a like to a blog
+
 export const addLike = (blogId) => axios.post(`/blog/${blogId}/like`, {}, { withCredentials: true });
 
-// Remove a like from a blog (unlike)
 export const removeLike = (blogId) => axios.delete(`/blog/${blogId}/unlike`, { withCredentials: true });
 
-// Get all likes for a specific blog
 export const getLikes = (blogId) => axios.get(`/blog/${blogId}/likes`);
 
-// Add a comment to a blog
-export const addComment = (blogId, content) => axios.post(`/fun-blog/addComment/${blogId}`, { content });
-
-
-//User Rotues 
+export const addComment = (blogId, content) => axios.post(`/blog/${blogId}/comment`, { content },{ withCredentials: true });
 
 export const login = (userId,password) => axios.post('/login',{userId,password},{
   withCredentials: true,
 })
+export const logout = () => axios.post('/logout',{},{
+  withCredentials: true,
+})
+
+export const getUserInfo = () => axios.post('/userinfo',{},{withCredentials:true})
