@@ -7,8 +7,8 @@ export const getBlogs = (page,limit) => axios.get(
     "/all-blogs",
     { params: { page: page, limit: limit } }
   );
-export const getBlog = (userId) => axios.get(
-    `/blog/${userId}`,
+export const getBlog = (identifier) => axios.get(
+    `/blog/${identifier}`,
   );
 export const addNewPost = (data) => axios.post(
     `/create-blog`
@@ -29,5 +29,26 @@ export const login = (userId,password) => axios.post('/login',{userId,password},
 export const logout = () => axios.post('/logout',{},{
   withCredentials: true,
 })
+export const signup = (formData) => axios.post('/register',formData,{
+  withCredentials: true,
+})
+
 
 export const getUserInfo = () => axios.post('/userinfo',{},{withCredentials:true})
+export const getProfile = (identifier) => axios.post('/profile',{identifier},{withCredentials:true})
+export const updateUserProfile = (updatedData) => axios.put('/profile/update',updatedData,{withCredentials:true})
+
+export const follow = (toFollow) => axios.put('/follow',{toFollow},{withCredentials:true})
+
+export const unFollow = (toUnfollow) => axios.put('/unFollow',{toUnfollow},{withCredentials:true})
+
+export const getNotifications = () => axios.get('/notification',{
+  withCredentials:true
+})
+
+export const markAllAsRead = () => axios.post('/notification/markAllAsRead',{},{withCredentials:true})
+
+export const search = (query,type) => axios.get('/search/',{params:{
+  query:query,
+  type:type
+}})

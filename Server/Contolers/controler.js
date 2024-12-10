@@ -10,17 +10,17 @@ config();
 
 // Register User
 const registerUser = async (req, res) => {
-    const { userName, password, email } = req.body;
+    const { userName, password, email, name } = req.body;
     const existedUser = await User.findOne({
         $or: [{ userName }, { email }] // Check if email or username already exists
     });
 
     if (existedUser) return res.status(400).json({ msg: "Email or UserName Already Exists" });
-
     const pfp = req.file?.path;
     try {
         const avatar = await uploadOnCloudinary(pfp);
         await User.create({
+            name,
             userName,
             password,
             email,
@@ -41,37 +41,43 @@ const loginUser = async (req, res) => {
         if (!user) return res.status(400).json({ msg: "User Not Found" });
 
         if (user.password !== password) {
-            return res.status(400).json({ msg: "Invalid Credentials" });
+            return res.status(400).json({ msg: "Invalid Password" });
         }
 
         const accessToken = jwt.sign({
+            name: user.name,
             userName: user.userName,
-            userId: user._id,
+            _id: user._id,
             email: user.email,
             isAdmin: user.isAdmin,
             avatar: user.avatar,
-            bio:user.bio,
-            createdAt : user.createdAt
-        }, process.env.JWT_SECRET, { expiresIn: "1h" });
+            bio: user.bio,
+            createdAt: user.createdAt,
+            followers:user.followers,
+            following:user.following
+        }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         const refreshToken = jwt.sign({
+            name: user.name,
             userName: user.userName,
-            userId: user._id,
+            _id: user._id,
             email: user.email,
             isAdmin: user.isAdmin,
             avatar: user.avatar,
-            bio:user.bio,
-            createdAt : user.createdAt
+            bio: user.bio,
+            createdAt: user.createdAt,
+            followers:user.followers,
+            following:user.following
         }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
         res.status(200)
-        .cookie('accessToken', accessToken, {
-          httpOnly: true,
-          secure: "false", // Only secure in production
-          maxAge:  7 * 24 * 60 * 60 * 1000, // 7 day
-          sameSite: 'None', // Required for cross-origin cookies
-        })
-        .json({ msg: "User Logged In!", data: user });
+            .cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: "false", // Only secure in production
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day
+                sameSite: 'None', // Required for cross-origin cookies
+            })
+            .json({ msg: "User Logged In!", data: user });
     } catch (error) {
         console.log(error);
         res.status(500).json({ msg: `Server Error: ${error.message}` });
@@ -94,11 +100,11 @@ const logoutUser = async (req, res) => {
 
 // Get User Profile
 const getUserProfile = async (req, res) => {
-    const userInfo = req.body.userId;
+    const { identifier } = req.body;
     try {
-        const userProfile = await User.findOne({ $or: [{ userName: userInfo }, { email: userInfo }] });
+        const userProfile = await User.findById(identifier).select('-password -email')
         if (!userProfile) {
-            return res.status(404).json({ msg: "User Not Found!" });
+            return res.status(400).json({ msg: "User Not Found!" });
         }
         res.status(200).json({ msg: "User Found", data: userProfile });
     } catch (error) {
@@ -108,12 +114,14 @@ const getUserProfile = async (req, res) => {
 
 // Update User Profile
 const updateUserProfile = async (req, res) => {
-    const { userName, email, bio } = req.body;
-    const userId = req.user.userId;
+    const { name,userName, email, bio } = req.body;
+    const userId = req.user._id;
     try {
         const user = await User.findById(userId);
+        if(user._id != userId) return res.status(404).json({ msg: "Not authorized" });
         if (!user) return res.status(404).json({ msg: "User Not Found!" });
 
+        user.name = name || user.name;
         user.userName = userName || user.userName;
         user.email = email || user.email;
         user.bio = bio || user.bio;
@@ -146,23 +154,23 @@ const deleteUser = async (req, res) => {
 
 const getUserInfo = (req, res) => {
     try {
-      const userInfo = req.user;
-  
-      if (!userInfo) {
-        return res.status(404).json({ message: "User information not found" });
-      }
-  
-      res.status(200).json({ userInfo });
+        const userInfo = req.user;
+
+        if (!userInfo) {
+            return res.status(404).json({ message: "User information not found" });
+        }
+
+        res.status(200).json({ userInfo });
     } catch (error) {
-      res.status(500).json({ message: "Error retrieving user information", error });
+        res.status(500).json({ message: "Error retrieving user information", error });
     }
-  };
-  
+};
+
 // Create Blog
 const createBlog = async (req, res) => {
-    const { title, category ,description} = req.body;
+    const { title, category, description } = req.body;
     const img = req.file?.path;
-    const author = req.user.userId;
+    const author = req.user._id;
 
     if (!title || !img) return res.status(400).json({ msg: "Title and Blog Image are required!" });
 
@@ -189,7 +197,7 @@ const getAllBlogs = async (req, res) => {
         const blogs = await Blog.find()
             .skip((page - 1) * limit) // Pagination logic
             .limit(parseInt(limit)) // Limit results
-            .populate('author','userName avatar')
+            .populate('author', 'userName avatar')
             .populate({
                 path: 'comments',
                 populate: {
@@ -214,36 +222,36 @@ const getAllBlogs = async (req, res) => {
 
 // Get Single Blog
 const getBlog = async (req, res) => {
-    const { userId } = req.params;
+    const { identifier } = req.params;
+
     try {
-        // Validate and convert userId to ObjectId
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ msg: "Invalid userId provided." });
+        // Check if the identifier is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(identifier)) {
+            return res.status(400).json({ msg: "Invalid identifier provided." });
         }
 
-        const objectId = new mongoose.Types.ObjectId(userId);
+        const objectId = new mongoose.Types.ObjectId(identifier);
 
-        const blog = await Blog.find({ author: objectId })
-        .populate({
-            path: 'comments',
-            populate: {
-                path: 'author',
-                select: 'userName avatar'
-            }
-        })
-        .populate({
-            path: 'likes',
-            populate: {
-                path: 'user',
-                select: 'userName'
-            }
-        });
+        const blog = await Blog.find({ $or: [{ author: objectId }, { _id: objectId }, { title: objectId }] }).populate('author', 'avatar userName _id')
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'author',
+                    select: 'userName avatar _id'
+                }
+            })
+            .populate({
+                path: 'likes',
+                populate: {
+                    path: 'user',
+                    select: 'userName'
+                }
+            });
 
-        if (!blog.length) return res.status(404).json({ msg: "No blogs found for this author." });
+        if (!blog.length) return res.status(404).json({ msg: "No blogs found" });
 
         res.status(200).json({ msg: "Blog(s) Found!", data: blog });
     } catch (error) {
-        // Handle any unexpected errors
         res.status(500).json({ msg: `Server Error: ${error.message}` });
     }
 };
@@ -281,7 +289,7 @@ const addComment = async (req, res) => {
     try {
         const { blogId } = req.params;
         const { content } = req.body;
-        const { userId } = req.user
+        const { _id } = req.user
 
         const blog = await Blog.findById(blogId);
         if (!blog) return res.status(404).json({ msg: "Blog Not Found!" });
@@ -289,15 +297,15 @@ const addComment = async (req, res) => {
         const comment = await Comment.create({
             content,
             blog: blogId,
-            author: req.user.userId
+            author: req.user._id
         });
 
-        if (blog.author.toString() !== userId) {
+        if (blog.author.toString() !== _id) {
             await Notification.create({
-                recipient: blog.author,
+                recipient: blog.author._id,
                 type: 'comment',
                 blog: blogId,
-                comment: comment._id
+                sender:_id
             })
         }
 
@@ -327,7 +335,7 @@ const removeComment = async (req, res) => {
 
 const addLike = async (req, res) => {
     const { blogId } = req.params;  // Extract blog ID from request parameters
-    const userId = req.user.userId;  // Get the user ID from the authenticated user
+    const userId = req.user._id;  // Get the user ID from the authenticated user
 
     try {
         // Check if the user has already liked the blog
@@ -351,10 +359,10 @@ const addLike = async (req, res) => {
 
         if (blog.author.toString() !== userId) {
             await Notification.create({
-                recipient: blog.author,
-                type: ['like'],
+                recipient: blog.author._id,
+                sender:userId,
+                type: 'like',
                 blog: blogId,
-                newLike: newLike._id
             })
         }
 
@@ -367,7 +375,7 @@ const addLike = async (req, res) => {
 // Remove Like from Blog
 const removeLike = async (req, res) => {
     const { blogId } = req.params;  // Extract blog ID from request parameters
-    const userId = req.user.userId;  // Get the user ID from the authenticated user
+    const userId = req.user._id;  // Get the user ID from the authenticated user
 
     try {
         // Find the like entry to remove
@@ -414,29 +422,212 @@ const getLikes = async (req, res) => {
 // Notification Controllers
 
 const getNotification = async (req, res) => {
-    console.log("Hello its working");
-    
-    const recipientId = req.user.userId
-    console.log(recipientId);
-    
-    try {
-        const userNotification = await Notification.findById(recipientId).populate({
-            path: 'recipient',
-            populate: {
-                path: 'author',
-                select: 'userName'
-            }
-        })
-            .populate('blog','title')
 
-        if(!userNotification) return res.status(400).json({msg:"no notification for this user"})    
+    const recipientId = req.user._id
+
+    try {
+        const userNotification = await Notification.find({ recipient: recipientId })
+        .populate({
+            path: 'sender',
+            select: 'userName name avatar _id'  // Return only the username for each liked user
+        })
+        .populate('blog', 'title')
+        if (!userNotification) return res.status(400).json({ msg: "no notification for this user" })
         res.status(200).json({ msg: "User Notification", userNotification })
     } catch (error) {
-        return res.status(500).json({msg:"Error while fetching all the notification for user"})
+        console.log(error)
+        return res.status(500).json({ msg: "Error while fetching all the notification for user" })
     }
 }
 
+
+const markAllASRead = async (req,res) =>{
+    const userId =  req.user._id;
+    console.log(userId)
+    const {dateThreshold } = req.body;
+
+    try {
+        const result = await Notification.updateMany(
+            {recipient:userId,isRead:false, createdAt:{ $lt: dateThreshold  || new Date()}},
+            {$set:{isRead:true}}
+        );
+        if(result.modifiedCount > 0){
+            return res.status(200).json({msg:"Notification marked as read"})
+        }else{
+            return res.status(404).json({msg:"No unread notifications found"})
+        }
+    } catch (error) {   
+        return res.status(505).json({msg:"Error while marking all notification as read",error})
+    }
+}
+
+const search = async (req, res) => {
+    const escapeRegExp = (string) => {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapes special regex characters
+      };
+    const { query, type } = req.query
+    try {
+        if (query.trim() === ' ') {
+            return res.status(400).json({ success: false, msg: "Search query is required" })
+        }
+
+        let results = []
+        const searchRegax = new RegExp(escapeRegExp(query), 'i')
+
+        if (type === 'user') {
+            results = await User.find({
+                $or: [
+                    { name: searchRegax },
+                    { email: searchRegax },
+                    { userName: searchRegax }
+                ]
+            }).select('-password -isAdmin -createdAt -followers -following -email -bio ')
+        } else if (type === 'blog') {
+            results = await Blog.find({
+                $or: [
+                    { title: searchRegax },
+                    { description: searchRegax }
+                ]
+            })
+        } else {
+            const [users, blogs] = await Promise.all([
+                User.find({
+                    $or: [
+                        { name: searchRegax },
+                        { userName: searchRegax }
+                    ]
+                }).select('-password')
+            ])
+            Blog.find({
+                $or: [
+                    { title: searchRegax },
+                    { description: searchRegax }
+                ]
+            })
+            results = {
+                users,
+                blogs
+            }
+        }
+        res.status(200).json({ success: true, data: results });
+    } catch (error) {
+        console.error('Error during search:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+}
+
+const addFollowers = async (req, res) => {
+    const { toFollow } = req.body;
+    const userId = req.user._id;
+  
+    try {
+      // Update the 'followers' list of the target user
+      await User.findByIdAndUpdate(
+        toFollow,
+        { $addToSet: { followers: userId } },
+        { new: true }
+      );
+  
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { following: toFollow } },
+        { new: true }
+      ).select('-password');
+       
+        await Notification.create({
+            recipient: toFollow,
+            type: 'follow',
+            sender:userId
+        })
+
+      const accessToken = jwt.sign(
+        {
+          name: user.name,
+          userName: user.userName,
+          _id: user._id,
+          email: user.email,
+          isAdmin: user.isAdmin,
+          avatar: user.avatar,
+          bio: user.bio,
+          createdAt: user.createdAt,
+          followers: user.followers,
+          following: user.following,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      res
+        .cookie('accessToken', accessToken, {
+          httpOnly: true,
+          secure: false, // Use true in production with HTTPS
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          sameSite: 'None', // For cross-origin cookies
+        })
+        .status(200)
+        .json({ msg: 'User Followed successfully!', data: user });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: 'Error while following!', error: error.message });
+    }
+  };
+  
+  const removeFollower = async (req, res) => {
+    const { toUnfollow } = req.body;
+    const userId = req.user._id;
+  
+    if (!toUnfollow) {
+      return res.status(400).json({ msg: 'User to unfollow ID not provided' });
+    }
+  
+    try {
+      await User.findByIdAndUpdate(
+        toUnfollow,
+        { $pull: { followers: userId } },
+        { new: true }
+      );
+  
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $pull: { following: toUnfollow } },
+        { new: true }
+      ).select('-password'); // Exclude the password
+  
+      const accessToken = jwt.sign(
+        {
+          name: user.name,
+          userName: user.userName,
+          _id: user._id,
+          email: user.email,
+          isAdmin: user.isAdmin,
+          avatar: user.avatar,
+          bio: user.bio,
+          createdAt: user.createdAt,
+          followers: user.followers,
+          following: user.following,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+  
+      res
+        .cookie('accessToken', accessToken, {
+          httpOnly: true,
+          secure: false, // Use true in production with HTTPS
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          sameSite: 'None', // For cross-origin cookies
+        })
+        .status(200)
+        .json({ msg: 'User Unfollowed successfully!', data: user });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: 'Error while unfollowing!', error: error.message });
+    }
+  };
+  
+
 export {
+    search,
     registerUser,
     loginUser,
     logoutUser,
@@ -454,5 +645,8 @@ export {
     removeLike,
     getLikes,
     getNotification,
-    getUserInfo
+    markAllASRead,
+    getUserInfo,
+    removeFollower,
+    addFollowers
 };

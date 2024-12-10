@@ -18,6 +18,7 @@ const AddPost = () => {
   // List of available categories
   const categories = [
     "Technology",
+    "Anime",
     "Lifestyle",
     "Health",
     "Education",
@@ -150,7 +151,7 @@ const AddPost = () => {
       <h1 className="text-2xl font-bold mb-4">Add New Post</h1>
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-md p-6 w-full max-w-2xl"
+        className="bg-white rounded-lg shadow-md p-6 w-full max-w-2xl mb-10"
       >
         {/* Title Input */}
         <div className="mb-4">

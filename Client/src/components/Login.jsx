@@ -1,43 +1,43 @@
 import React, { useState } from 'react';
-import { FaGoogle, FaFacebookF } from 'react-icons/fa'; // Icons for Social Login
-import { login } from '../services/api'; // Assuming login API is provided
-import Profile from './Profile'; // Profile Component
+import { FaGoogle, FaFacebookF } from 'react-icons/fa';
+import { login } from '../services/api'; 
+import Profile from './Profile'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn, setUser } from '../app/Slices/userSlice';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom'; 
 import UserProfile from './UserProfile';
+
 
 export default function Login() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Loading State
-  const [error, setError] = useState(null); // Error State
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(null); 
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
-    setLoading(true); // Start Loading
-    setError(null); // Reset previous errors
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null); 
 
-    login(userId, password)
+    await login(userId, password)
       .then((res) => {
-        dispatch(setUser(res.data.data)); // Update user data in Redux
+        dispatch(setUser(res.data.data)); 
         dispatch(setLoggedIn(true)); 
-        navigate('/userProfile'); 
+        navigate(`/userProfile/${res.data.data._id}`); 
       })
       .catch((err) => {
-        console.error(err);
-        setError(err.message || 'An error occurred'); 
+        setError(err.response.data.msg || 'An error occurred'); 
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn); // Use Redux state to check login status
-  const user = useSelector((state) => state.user.userData); // Use Redux state to check login status
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn); 
+  const user = useSelector((state) => state.user.userData); 
   
-  // Show Profile if logged in
+
   if (isLoggedIn) {
     return <UserProfile />;
   }
@@ -92,7 +92,7 @@ export default function Login() {
         {/* Login Button */}
         <button
           onClick={handleLogin}
-          className="w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-lg text-lg hover:from-orange-600 hover:to-yellow-600 transition"
+          className="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg text-large hover:from-blue-600 hover:to-purple-600 transition"
           disabled={loading}
         >
           {loading ? (
@@ -126,7 +126,7 @@ export default function Login() {
 
         {/* Forgot Password */}
         <div className="text-center mt-4">
-          <a href="#" className="text-sm text-orange-500 hover:underline">
+          <a href="#" className="text-purple-500 hover:text-blue-500 focus:text-purple-500 mt-2 text-sm transition">
             Forgot Password?
           </a>
         </div>
@@ -152,9 +152,9 @@ export default function Login() {
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Don't have an account?{' '}
-            <a href="#" className="text-orange-500 font-medium hover:underline">
+            <Link to="/signup" className="text-purple-500 hover:text-blue-500 focus:text-purple-500 mt-2 text-sm transition">
               Sign Up
-            </a>
+            </Link>
           </p>
         </div>
       </div>

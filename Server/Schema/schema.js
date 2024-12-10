@@ -4,6 +4,10 @@ const userSchema = new Schema({
     avatar:{
         type:String,
     },
+    name:{
+        type:String,
+        required:true
+    },
     userName:{
         type:String,
         required:true,
@@ -23,8 +27,18 @@ const userSchema = new Schema({
         minlength:8
     },
     bio:{
-        type:String
+        type:String,
+        maxlength :400
+
     },
+    followers:[{
+        type:mongoose.Types.ObjectId,
+        ref:"User"
+    }],
+    following:[{
+        type:mongoose.Types.ObjectId,
+        ref:"User"
+    }],
     isAdmin:{
         type:Boolean,
         default:false
@@ -129,32 +143,52 @@ const likeSchema = new Schema({
     }
 }, { timestamps: true })
 
-const notificationSchema = new Schema({
-    recipient:{
-        type:Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+const notificationSchema = new Schema(
+    {
+      recipient: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      sender: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true, // The user who performed the action
+      },
+      type: {
+        type: String,
+        enum: ['like', 'comment', 'follow', 'system'], // Type of notification
+        required: true,
+      },
+      blog: {
+        type: Schema.Types.ObjectId,
+        ref: 'Blog', // Reference to the related blog (if applicable)
+      },
+      comment: {
+        type: Schema.Types.ObjectId,
+        ref: 'Comment', // Reference to the related comment (if applicable)
+      },
+      like: {
+        type: Schema.Types.ObjectId,
+        ref: 'Like', // Reference to the related like (if applicable)
+      },
+      isRead: {
+        type: Boolean, // Tracks if the notification is read
+        default: false,
+      },
+      additionalInfo: {
+        type: String, // Optional field for extra metadata
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
-    type:{
-        type:String,
-        enum:['like','comment'],
-        required:true
-    },
-    blog:{
-        type:Schema.Types.ObjectId,
-        ref:'Blog',
-        required:true
-    },
-    comment:{
-        type:Schema.Types.ObjectId,
-        ref:'Comment',
-        required:true
-    },
-    createdAt:{
-        type:Date,
-        default:Date.now
+    {
+      timestamps: true, // Automatically manage `createdAt` and `updatedAt` timestamps
     }
-})
+  );
+
 
 export const User = mongoose.model('User', userSchema);
 export const Blog = mongoose.model('Blog', postSchema);

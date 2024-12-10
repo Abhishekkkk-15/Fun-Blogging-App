@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 const BottomNavbar = () => {
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-white p-4 shadow-md flex justify-around">
+    <div className="fixed z-50 bottom-0 left-0 w-full bg-white p-4 shadow-md flex justify-around">
       <Link to='/'>
       <button className="text-gray-500 hover:text-blue-500 focus:text-purple-500 transition">
       <i className="fa-solid fa-house"></i>

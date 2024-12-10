@@ -1,9 +1,8 @@
-// userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  userData: null,
-  isLoggedIn: false, // Renamed to 'isLoggedIn' for consistency
+  userData: JSON.parse(localStorage.getItem('userData')) || null,
+  isLoggedIn: JSON.parse(localStorage.getItem('isLoggedIn')) || false,
 };
 
 export const userSlice = createSlice({
@@ -12,12 +11,20 @@ export const userSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       state.userData = action.payload;
+      localStorage.setItem('userData', JSON.stringify(action.payload));
     },
     setLoggedIn: (state, action) => {
-      state.isLoggedIn = action.payload; // Correct field name
+      state.isLoggedIn = action.payload;
+      localStorage.setItem('isLoggedIn', JSON.stringify(action.payload));
+    },
+    clearUser: (state) => {
+      state.userData = null;
+      state.isLoggedIn = false;
+      localStorage.removeItem('userData');
+      localStorage.removeItem('isLoggedIn');
     },
   },
 });
 
-export const { setUser, setLoggedIn } = userSlice.actions;
+export const { setUser, setLoggedIn, clearUser } = userSlice.actions;
 export default userSlice.reducer;

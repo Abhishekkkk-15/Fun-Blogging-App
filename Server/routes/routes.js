@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, logoutUser,getUserInfo, getUserProfile, updateUserProfile, deleteUser, createBlog, getAllBlogs, getBlog, updateBlog, deleteBlog, addComment, removeComment, addLike, removeLike, getLikes, getNotification } from "../Contolers/controler.js";
+import { registerUser, loginUser, logoutUser,getUserInfo, getUserProfile, updateUserProfile, deleteUser, createBlog, getAllBlogs, getBlog, updateBlog, deleteBlog, addComment, removeComment, addLike, removeLike, getLikes, getNotification, search, addFollowers, removeFollower, markAllASRead } from "../Contolers/controler.js";
 import { checkAuthenticaion } from "../Middlewares/authMiddleware.js";
 import multer from "multer";
 
@@ -10,7 +10,7 @@ const upload = multer({ dest: "uploads/" });
 router.post("/register", upload.single("avatar"), registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
-router.get("/profile", getUserProfile);
+router.post("/profile", getUserProfile);
 router.put("/profile/update", checkAuthenticaion, upload.single("avatar"), updateUserProfile);
 router.delete("/delete", checkAuthenticaion, deleteUser);
 router.post("/userinfo",checkAuthenticaion,getUserInfo)
@@ -18,7 +18,7 @@ router.post("/userinfo",checkAuthenticaion,getUserInfo)
 // Blog Routes
 router.post("/create-blog", checkAuthenticaion, upload.single("coverImage"), createBlog);
 router.get("/all-blogs", getAllBlogs);
-router.get("/blog/:userId", getBlog);
+router.get("/blog/:identifier", getBlog);
 router.put("/blog/update", checkAuthenticaion, updateBlog);
 router.delete("/blog/delete", checkAuthenticaion, deleteBlog);
 
@@ -34,5 +34,12 @@ router.delete("/blog/:blogId/unlike", checkAuthenticaion, removeLike);  // Remov
 //Notificatio Route
 router.get("/notification",checkAuthenticaion, getNotification);  // Get all likes for a blog post
 
+//Search Rotue
+router.get('/search',search)
+
+//Follow Route
+router.put('/follow',checkAuthenticaion,addFollowers)
+router.put('/UnFollow',checkAuthenticaion,removeFollower)
+router.post('/notification/markAllAsRead',checkAuthenticaion,markAllASRead)
 
 export default router;
