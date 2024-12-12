@@ -3,6 +3,7 @@ import uploadOnCloudinary from "../Middlewares/cloudinary.js";
 import { Blog, User, Comment, Like, Notification } from "../Schema/schema.js";
 import jwt from 'jsonwebtoken';
 import mongoose from "mongoose";
+import { sendResetEmail } from "../Middlewares/mailSender.js";
 
 config();
 
@@ -28,8 +29,8 @@ const registerUser = async (req, res) => {
         });
         res.status(201).json({ msg: "User Registered!" });
     } catch (error) {
-        console.log("Error registering user", error);
-        res.status(500).json({ msg: `Server Error: ${error.message}` });
+        // console.log("Error registering user", error);
+        res.status(500).json({ msg: error.message });
     }
 };
 
@@ -53,8 +54,8 @@ const loginUser = async (req, res) => {
             avatar: user.avatar,
             bio: user.bio,
             createdAt: user.createdAt,
-            followers:user.followers,
-            following:user.following
+            followers: user.followers,
+            following: user.following
         }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
         const refreshToken = jwt.sign({
@@ -66,8 +67,8 @@ const loginUser = async (req, res) => {
             avatar: user.avatar,
             bio: user.bio,
             createdAt: user.createdAt,
-            followers:user.followers,
-            following:user.following
+            followers: user.followers,
+            following: user.following
         }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
         res.status(200)
@@ -80,7 +81,7 @@ const loginUser = async (req, res) => {
             .json({ msg: "User Logged In!", data: user });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ msg: `Server Error: ${error.message}` });
+        res.status(500).json({ msg: error.message });
     }
 };
 
@@ -94,7 +95,7 @@ const logoutUser = async (req, res) => {
         });
         res.status(200).json({ msg: "User Logged Out!" });
     } catch (error) {
-        res.status(500).json({ msg: `Server Error: ${error.message}` });
+        res.status(500).json({ msg: error.message });
     }
 };
 
@@ -108,19 +109,21 @@ const getUserProfile = async (req, res) => {
         }
         res.status(200).json({ msg: "User Found", data: userProfile });
     } catch (error) {
-        res.status(500).json({ msg: `Server Error: ${error.message}` });
+        res.status(500).json({ msg: error.message });
     }
 };
 
 // Update User Profile
 const updateUserProfile = async (req, res) => {
-    const { name,userName, email, bio } = req.body;
+    const { name, userName, email, bio } = req.body;
     const userId = req.user._id;
     try {
+        const findUser = await User.findOne({$or:[{email:email},{userName:userName}]})
+        if(findUser) return res.status(404).json({msg:"User Name allready exist!!"})
         const user = await User.findById(userId);
-        if(user._id != userId) return res.status(404).json({ msg: "Not authorized" });
+        if (user._id != userId) return res.status(404).json({ msg: "Not authorized" });
         if (!user) return res.status(404).json({ msg: "User Not Found!" });
-
+        
         user.name = name || user.name;
         user.userName = userName || user.userName;
         user.email = email || user.email;
@@ -135,7 +138,7 @@ const updateUserProfile = async (req, res) => {
         res.status(200).json({ msg: "User Profile Updated!", data: updatedUser });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ msg: `Server Error: ${error.message}` });
+        res.status(500).json({ msg: error.message });
     }
 };
 
@@ -148,7 +151,7 @@ const deleteUser = async (req, res) => {
 
         res.status(200).json({ msg: "User Deleted Successfully!" });
     } catch (error) {
-        res.status(500).json({ msg: `Server Error: ${error.message}` });
+        res.status(500).json({ msg: error.message });
     }
 };
 
@@ -176,7 +179,7 @@ const createBlog = async (req, res) => {
 
     try {
         const coverImage = await uploadOnCloudinary(img);
-        const newPost = new Blog({
+        const newPost = new Blog({    // Blog.create and new Blog + save() both are valid
             title,
             coverImage,
             author,
@@ -184,41 +187,60 @@ const createBlog = async (req, res) => {
             description
         });
         await newPost.save();
-        res.status(201).json({ msg: "Blog Created Successfully!" });
+        res.status(201).json({ msg: "Blog Created Successfully!",_id:newPost._id });
     } catch (error) {
-        res.status(500).json({ msg: `Server Error: ${error.message}` });
+        res.status(500).json({ msg: error.message });
     }
 };
 
 // Get All Blogs with Pagination
 const getAllBlogs = async (req, res) => {
     try {
-        const { page = 1, limit = 1 } = req.query; // Default pagination parameters
+        let { page, limit = 3 } = req.query;
+
+        // Convert page and limit to integers
+        page = parseInt(page, 10);
+        limit = parseInt(limit, 10);
+
+        if (isNaN(page) || page <= 0) page = 1;
+        if (isNaN(limit) || limit <= 0) limit = 3;
+
+        const totalBlogs = await Blog.countDocuments();
+
         const blogs = await Blog.find()
-            .skip((page - 1) * limit) // Pagination logic
-            .limit(parseInt(limit)) // Limit results
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit) // Proper skip calculation
+            .limit(limit) // Limit results
             .populate('author', 'userName avatar')
             .populate({
                 path: 'comments',
                 populate: {
                     path: 'author',
-                    select: 'userName avatar'
-                }
+                    select: 'userName avatar',
+                },
             })
             .populate({
                 path: 'likes',
                 populate: {
                     path: 'user',
-                    select: 'userName'
-                }
+                    select: 'userName',
+                },
             });
 
         if (!blogs.length) return res.status(404).json({ msg: "No Blogs Found!" });
-        res.status(200).json({ msg: "Blogs Found", data: blogs });
+
+        res.status(200).json({
+            msg: "Blogs Found",
+            data: blogs,
+            totalBlogs,
+            currentPage: page,
+            totalPages: Math.ceil(totalBlogs / limit),
+        });
     } catch (error) {
         res.status(500).json({ msg: `Server Error: ${error.message}` });
     }
 };
+
 
 // Get Single Blog
 const getBlog = async (req, res) => {
@@ -274,7 +296,8 @@ const updateBlog = async (req, res) => {
 
 // Delete Blog
 const deleteBlog = async (req, res) => {
-    const { blogId } = req.body;
+    const { blogId } = req.body
+    console.log(blogId)
     try {
         await Blog.findByIdAndDelete(blogId);
         res.status(200).json({ msg: "Blog Deleted Successfully!" });
@@ -290,7 +313,7 @@ const addComment = async (req, res) => {
         const { blogId } = req.params;
         const { content } = req.body;
         const { _id } = req.user
-
+        if (!content) return res.status(404).json({ msg: "Message needed" })
         const blog = await Blog.findById(blogId);
         if (!blog) return res.status(404).json({ msg: "Blog Not Found!" });
 
@@ -305,7 +328,7 @@ const addComment = async (req, res) => {
                 recipient: blog.author._id,
                 type: 'comment',
                 blog: blogId,
-                sender:_id
+                sender: _id
             })
         }
 
@@ -334,8 +357,8 @@ const removeComment = async (req, res) => {
 // Add Like to Blog
 
 const addLike = async (req, res) => {
-    const { blogId } = req.params;  // Extract blog ID from request parameters
-    const userId = req.user._id;  // Get the user ID from the authenticated user
+    const { blogId } = req.params;
+    const userId = req.user._id;
 
     try {
         // Check if the user has already liked the blog
@@ -360,7 +383,7 @@ const addLike = async (req, res) => {
         if (blog.author.toString() !== userId) {
             await Notification.create({
                 recipient: blog.author._id,
-                sender:userId,
+                sender: userId,
                 type: 'like',
                 blog: blogId,
             })
@@ -427,11 +450,11 @@ const getNotification = async (req, res) => {
 
     try {
         const userNotification = await Notification.find({ recipient: recipientId })
-        .populate({
-            path: 'sender',
-            select: 'userName name avatar _id'  // Return only the username for each liked user
-        })
-        .populate('blog', 'title')
+            .populate({
+                path: 'sender',
+                select: 'userName name avatar _id'  // Return only the username for each liked user
+            })
+            .populate('blog', 'title')
         if (!userNotification) return res.status(400).json({ msg: "no notification for this user" })
         res.status(200).json({ msg: "User Notification", userNotification })
     } catch (error) {
@@ -441,30 +464,31 @@ const getNotification = async (req, res) => {
 }
 
 
-const markAllASRead = async (req,res) =>{
-    const userId =  req.user._id;
+const markAllASRead = async (req, res) => {
+    const userId = req.user._id;
     console.log(userId)
-    const {dateThreshold } = req.body;
+    const { dateThreshold } = req.body;
 
     try {
         const result = await Notification.updateMany(
-            {recipient:userId,isRead:false, createdAt:{ $lt: dateThreshold  || new Date()}},
-            {$set:{isRead:true}}
+            { recipient: userId, isRead: false, createdAt: { $lt: dateThreshold || new Date() } },
+            { $set: { isRead: true } }
         );
-        if(result.modifiedCount > 0){
-            return res.status(200).json({msg:"Notification marked as read"})
-        }else{
-            return res.status(404).json({msg:"No unread notifications found"})
+        if (result.modifiedCount > 0) {
+            return res.status(200).json({ msg: "Notification marked as read" })
+        } else {
+            return res.status(404).json({ msg: "No unread notifications found" })
         }
-    } catch (error) {   
-        return res.status(505).json({msg:"Error while marking all notification as read",error})
+    } catch (error) {
+        return res.status(505).json({ msg: "Error while marking all notification as read", error })
     }
 }
 
 const search = async (req, res) => {
+    const {page = 1, limit = 1} = req.params
     const escapeRegExp = (string) => {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapes special regex characters
-      };
+    };
     const { query, type } = req.query
     try {
         if (query.trim() === ' ') {
@@ -486,7 +510,8 @@ const search = async (req, res) => {
             results = await Blog.find({
                 $or: [
                     { title: searchRegax },
-                    { description: searchRegax }
+                    { description: searchRegax },
+                    { Category: searchRegax },
                 ]
             })
         } else {
@@ -501,9 +526,11 @@ const search = async (req, res) => {
             Blog.find({
                 $or: [
                     { title: searchRegax },
-                    { description: searchRegax }
+                    { description: searchRegax },
+                    { Category: searchRegax }
                 ]
-            })
+            }).skip((page - 1) * limit) // Pagination logic
+            .limit(parseInt(limit)) 
             results = {
                 users,
                 blogs
@@ -519,112 +546,149 @@ const search = async (req, res) => {
 const addFollowers = async (req, res) => {
     const { toFollow } = req.body;
     const userId = req.user._id;
-  
+
     try {
-      // Update the 'followers' list of the target user
-      await User.findByIdAndUpdate(
-        toFollow,
-        { $addToSet: { followers: userId } },
-        { new: true }
-      );
-  
-      const user = await User.findByIdAndUpdate(
-        userId,
-        { $addToSet: { following: toFollow } },
-        { new: true }
-      ).select('-password');
-       
+        // Update the 'followers' list of the target user
+        await User.findByIdAndUpdate(
+            toFollow,
+            { $addToSet: { followers: userId } },
+            { new: true }
+        );
+
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { $addToSet: { following: toFollow } },
+            { new: true }
+        ).select('-password');
+
         await Notification.create({
             recipient: toFollow,
             type: 'follow',
-            sender:userId
+            sender: userId
         })
 
-      const accessToken = jwt.sign(
-        {
-          name: user.name,
-          userName: user.userName,
-          _id: user._id,
-          email: user.email,
-          isAdmin: user.isAdmin,
-          avatar: user.avatar,
-          bio: user.bio,
-          createdAt: user.createdAt,
-          followers: user.followers,
-          following: user.following,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
+        const accessToken = jwt.sign(
+            {
+                name: user.name,
+                userName: user.userName,
+                _id: user._id,
+                email: user.email,
+                isAdmin: user.isAdmin,
+                avatar: user.avatar,
+                bio: user.bio,
+                createdAt: user.createdAt,
+                followers: user.followers,
+                following: user.following,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
 
-      res
-        .cookie('accessToken', accessToken, {
-          httpOnly: true,
-          secure: false, // Use true in production with HTTPS
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          sameSite: 'None', // For cross-origin cookies
-        })
-        .status(200)
-        .json({ msg: 'User Followed successfully!', data: user });
+        res
+            .cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: false, // Use true in production with HTTPS
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                sameSite: 'None', // For cross-origin cookies
+            })
+            .status(200)
+            .json({ msg: 'User Followed successfully!', data: user });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ msg: 'Error while following!', error: error.message });
+        console.error(error);
+        res.status(500).json({ msg: 'Error while following!', error: error.message });
     }
-  };
-  
-  const removeFollower = async (req, res) => {
+};
+
+const removeFollower = async (req, res) => {
     const { toUnfollow } = req.body;
     const userId = req.user._id;
-  
+
     if (!toUnfollow) {
-      return res.status(400).json({ msg: 'User to unfollow ID not provided' });
+        return res.status(400).json({ msg: 'User to unfollow ID not provided' });
     }
-  
+
     try {
-      await User.findByIdAndUpdate(
-        toUnfollow,
-        { $pull: { followers: userId } },
-        { new: true }
-      );
-  
-      const user = await User.findByIdAndUpdate(
-        userId,
-        { $pull: { following: toUnfollow } },
-        { new: true }
-      ).select('-password'); // Exclude the password
-  
-      const accessToken = jwt.sign(
-        {
-          name: user.name,
-          userName: user.userName,
-          _id: user._id,
-          email: user.email,
-          isAdmin: user.isAdmin,
-          avatar: user.avatar,
-          bio: user.bio,
-          createdAt: user.createdAt,
-          followers: user.followers,
-          following: user.following,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
-  
-      res
-        .cookie('accessToken', accessToken, {
-          httpOnly: true,
-          secure: false, // Use true in production with HTTPS
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          sameSite: 'None', // For cross-origin cookies
-        })
-        .status(200)
-        .json({ msg: 'User Unfollowed successfully!', data: user });
+        await User.findByIdAndUpdate(
+            toUnfollow,
+            { $pull: { followers: userId } },
+            { new: true }
+        );
+
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { $pull: { following: toUnfollow } },
+            { new: true }
+        ).select('-password'); // Exclude the password
+
+        const accessToken = jwt.sign(
+            {
+                name: user.name,
+                userName: user.userName,
+                _id: user._id,
+                email: user.email,
+                isAdmin: user.isAdmin,
+                avatar: user.avatar,
+                bio: user.bio,
+                createdAt: user.createdAt,
+                followers: user.followers,
+                following: user.following,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+
+        res
+            .cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: false, // Use true in production with HTTPS
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                sameSite: 'None', // For cross-origin cookies
+            })
+            .status(200)
+            .json({ msg: 'User Unfollowed successfully!', data: user });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ msg: 'Error while unfollowing!', error: error.message });
+        console.error(error);
+        res.status(500).json({ msg: 'Error while unfollowing!', error: error.message });
     }
-  };
-  
+};
+
+//Password reset
+const requestPasswordReset = async(req,res)=>{
+    const {email} = req.body || req.user
+    if(!email){
+       return res.status(404).json({msg:"Email not provided"})
+    }
+    const user = await User.findOne({email})
+    if(!user){
+        return res.status(404).json({msg:"User Not Found with this email"})
+    }
+    try {
+        const resetToken = jwt.sign({userId : user._id}, process.env.JWT_SECRET,{expiresIn:"1h"})
+        await sendResetEmail(email,resetToken)
+
+        res.status(200).json({msg:`OTP sent to this ${email}`})
+    } catch (error) {
+        res.status(500).json({msg:`Error while sending reset email`,error: error.message})
+        console.log(error)
+        
+    }
+}
+
+const resetPassword = async(req,res)=>{
+    const {token,newPassword} = req.body
+
+    try {
+        const decode = jwt.verify(token,process.env.JWT_SECRET)
+        const userId = decode.userId
+        const user = await User.findByIdAndUpdate(userId,{password:newPassword})
+        if(!user){
+        res.status(404).json({msg:`User not found`})
+        }
+        res.status(200).json({ message: "Password reset successfully" });
+    } catch (error) {
+        res.status(500).json({msg:`Error while reseting password`,error: error.message})
+    }
+}
 
 export {
     search,
@@ -648,5 +712,7 @@ export {
     markAllASRead,
     getUserInfo,
     removeFollower,
-    addFollowers
+    addFollowers,
+    requestPasswordReset,
+    resetPassword
 };

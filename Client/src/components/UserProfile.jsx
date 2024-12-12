@@ -3,7 +3,7 @@ import { FaEdit } from 'react-icons/fa'; // Icon for Edit
 import { HiDotsVertical } from 'react-icons/hi'; // Icon for Menu
 import { useDispatch, useSelector } from 'react-redux';
 import { Menu, Transition } from '@headlessui/react'; // For dropdown functionality
-import { getBlog, logout } from '../services/api';
+import { deletePost, getBlog, logout } from '../services/api';
 import { setLoggedIn, setUser } from '../app/Slices/userSlice';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import Masonry from 'react-masonry-css'; // Import react-masonry-css for the masonry layout
@@ -13,6 +13,7 @@ export default function UserProfile({ log }) {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user?.userData);
   const navigate = useNavigate(); // Initialize useNavigate hook
+  const [tryToDelete,setTryToDelete] = useState(false)
   const [userPosts, setUserPosts] = useState([]);
 
   const handleLogOut = async () => {
@@ -41,11 +42,20 @@ export default function UserProfile({ log }) {
     };
 
     fetchBlogs();
-  }, [user]);
+  }, [user,tryToDelete]);
 
   const handleUserUpdate = (user) => {
     navigate('/edit-profile', { state: { user } });
   };
+
+  const handleDelete = async(blogId) =>{
+    console.log(blogId)
+    await deletePost(blogId).then(res => {
+      console.log(res)
+      setTryToDelete(true)
+    })
+    .catch(err => console.log(err))
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center p-4">
@@ -127,7 +137,7 @@ export default function UserProfile({ log }) {
         </div>
         <div className="text-center">
           <p className="text-xl font-bold">{userPosts.length}</p>
-          <p className="text-gray-500 text-sm">Posts</p>
+          <p className="text-gray-500 text-sm">Blogs</p>
         </div>
       </div>
 
@@ -183,7 +193,7 @@ export default function UserProfile({ log }) {
                       <Menu.Item>
                         {({ active }) => (
                           <button
-                            onClick={() => console.log("Delete post:", post._id)}
+                            onClick={() => handleDelete(post?._id)}
                             className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-red-600`}
                           >
                             Delete
@@ -200,15 +210,26 @@ export default function UserProfile({ log }) {
           )}
         </Masonry>
         {loading && (
-          [...Array(9)].map((_, index) => (
-            <div key={index} className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-md">
-              <img
-                src={`https://via.placeholder.com/150?text=Img${index + 1}`}
-                alt={`Placeholder ${index + 1}`}
-                className="w-full h-full object-cover rounded-md"
-              />
-            </div>
-          ))
+          <Masonry
+          breakpointCols={{
+            default: 4, // 4 columns for large screens
+            1024: 3,    // 3 columns for medium screens
+            768: 2,     // 2 columns for small screens
+            480: 2,     // 1 column for extra small screens
+          }}
+          className="flex w-full gap-4"
+          columnClassName="masonry-column"
+        >
+          {/* Show Loading Placeholders */}
+          {loading && (
+            Array.from({ length: 8 }).map((_, index) => (
+              <div
+                key={index}
+                className="h-64 bg-gray-200 animate-pulse rounded-md"
+              ></div>
+            ))
+          ) }
+        </Masonry>
         )}
       </div>
     </div>

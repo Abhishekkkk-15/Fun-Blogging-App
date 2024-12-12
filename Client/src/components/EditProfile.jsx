@@ -10,6 +10,7 @@ const EditProfile = () => {
     const [bio, setBio] = useState("");
     const [profilePicture, setProfilePicture] = useState(null);
     const [previewImage, setPreviewImage] = useState(null); // For image preview
+    const [error, setError] = useState('')
     const location = useLocation();
     const user = location?.state?.user || {};
 
@@ -30,25 +31,24 @@ const EditProfile = () => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append("fullName", fullName || user.name);
-        formData.append("username", username || user.userName);
+        formData.append("name", fullName || user.name);
+        formData.append("userName", username || user.userName);
         formData.append("bio", bio || user.bio);
         formData.append("avatar", profilePicture);
 
-        try {
-            await updateUserProfile(formData)
-                .then((res) => {
-                    // dispatch(setUser(res.data))
-                    alert("User updated!")
-                })
-                .catch((err) => {
-                    alert("Error whiel updating user!"),
-                        console.log(err)
-                });
-        } catch (error) {
-            console.error("Error updating profile:", error);
-            alert("Failed to update profile.");
-        }
+
+        await updateUserProfile(formData)
+            .then((res) => {
+                // dispatch(setUser(res.data))
+                console.log(res)
+                alert("User updated!")
+            })
+            .catch((err) => {
+                setError(err.response.data.msg)
+                    console.log(err)
+
+            });
+
     };
 
     return (
@@ -131,6 +131,11 @@ const EditProfile = () => {
                         rows="3"
                     ></textarea>
                 </div>
+                {error && (
+                    <div className="bg-red-100 text-red-800 border-l-4 border-red-500 p-2 mb-4">
+                        {error}
+                    </div>
+                )}
 
                 {/* Submit Button */}
                 <button

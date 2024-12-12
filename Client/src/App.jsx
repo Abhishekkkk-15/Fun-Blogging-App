@@ -11,6 +11,8 @@ import Login from './components/Login';
 import UserProfile from './components/UserProfile';
 import AddPost from './components/AddPost';
 import EditProfile from './components/EditProfile';
+import ForgetPassword from './components/ForgetPassword';
+import ResetPassword from './components/ResetPassword';
 function App() {
   return (
     <div className="bg-[#fefefe] min-h-screen">
@@ -27,6 +29,8 @@ function App() {
         <Route path="/userProfile/:id" element={<UserProfile />} />
         <Route path="/add-blog" element={<AddPost />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/forget-passwrod" element={<ForgetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
       <BottomNavbar/>
     </Router>

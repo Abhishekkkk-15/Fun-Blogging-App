@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FaImage, FaTimes } from "react-icons/fa";
 import { addNewPost } from "../services/api.jsx"; // Assuming you have an API service for this
 import { setPost } from "../app/Slices/postReducer";
@@ -14,9 +14,13 @@ const AddPost = () => {
   const [coverImage, setCoverImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const user = useSelector((state) => state.user.userData);
+  const [notLogged, setNotLoged] = useState(false)
   // List of available categories
   const categories = [
+    "Cartoon",
+    "Cars",
+    "Nature",
     "Technology",
     "Anime",
     "Lifestyle",
@@ -120,7 +124,14 @@ const AddPost = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (!user) {
+      setNotLoged(true)
+      setTimeout(() => {
+        setNotLoged(false)
+      }, 1000);
+      return;
+    }
+    e.preventDefault(); 
     if (!title || !description || !category || !coverImage) {
       alert("Please fill in all fields and upload an image.");
       return;
@@ -135,9 +146,9 @@ const AddPost = () => {
       formData.append("coverImage", coverImage);
 
       const response = await addNewPost(formData);
-      const newPost = response.data;
+      const newPost = response.data._id;
       dispatch(setPost(newPost));
-    //   navigate(`/details/${newPost.id}`); // Redirect to the newly created post details page
+        navigate(`/details/${newPost}`); // Redirect to the newly created post details page
     } catch (error) {
       console.error("Error adding post:", error);
       alert("Error while creating the post.");
@@ -164,7 +175,14 @@ const AddPost = () => {
             placeholder="Enter post title"
           />
         </div>
-
+        {notLogged && (
+          <span
+            className="bg-gray-400 h-8 w-36 text-white z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
+            role="alert"
+          >
+            Login First!!
+          </span>
+        )}
         {/* Description Input */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-700">Description</label>
@@ -235,9 +253,8 @@ const AddPost = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`${
-              loading ? "bg-gray-400" : "bg-gradient-to-r from-blue-500 to-purple-500"
-            } text-white py-2 px-6 rounded-md transition-all duration-300 hover:from-blue-600 hover:to-purple-600`}
+            className={`${loading ? "bg-gray-400" : "bg-gradient-to-r from-blue-500 to-purple-500"
+              } text-white py-2 px-6 rounded-md transition-all duration-300 hover:from-blue-600 hover:to-purple-600`}
           >
             {loading ? "Submitting..." : "Add Post"}
           </button>

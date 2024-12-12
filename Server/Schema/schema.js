@@ -11,7 +11,7 @@ const userSchema = new Schema({
     userName:{
         type:String,
         required:true,
-        unique:true,
+        unique:[true,"userName already exists"],
         minlength:3
     },
     email:{
@@ -61,11 +61,11 @@ const postSchema = new Schema({
     },
     coverImage:{
         type:String,
-        required:true,
+        required:[true,"Please Provide the Blog Iamge"],
     },
     description:{
         type:String,
-        maxlength :2000,
+        maxlength :[2000, "Word length must be under 2000 character's "],
         required:true
     },
     Category:[{
@@ -116,10 +116,7 @@ const categorySchema = new Schema({
     name: {
         type: String,
         required: [true, "Category name is required."],
-        enum: {
-            values: ["Anime","Technology", "Health", "Education", "Entertainment", "Sports", "Lifestyle", "Science"],
-            message: "{VALUE} is not a valid category. Please select a predefined category."
-        }
+       
     },
     description:{
         type:String,

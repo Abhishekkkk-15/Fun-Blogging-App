@@ -4,6 +4,7 @@ import { signup } from "../services/api";
 
 const Register = () => {
   const [theme, setTheme] = useState("light");
+  const [error, setError] = useState('')
   const navigate = useNavigate();
   const [regDetail, setRegDetail] = useState({
     name: "",
@@ -53,22 +54,22 @@ const Register = () => {
     formData.append("email", regDetail.email);
     formData.append("password", regDetail.password);
     formData.append("avatar", regDetail.avatar);
-   
+
 
     try {
       const res = await signup(formData);
       console.log(res);
       navigate("/login");
     } catch (err) {
+      setError(err.response?.data?.msg)
       console.error(err);
     }
   };
 
   return (
     <div
-      className={`min-h-screen ${
-        theme === "light" ? "bg-gray-100" : "bg-gray-800"
-      } flex flex-col items-center justify-center p-4`}
+      className={`min-h-screen mb-12 ${theme === "light" ? "bg-gray-100" : "bg-gray-800"
+        } flex flex-col items-center justify-center p-4`}
     >
       <button
         onClick={toggleTheme}
@@ -77,14 +78,12 @@ const Register = () => {
         {theme === "light" ? "🌙" : "🌞"}
       </button>
       <div
-        className={`w-full max-w-lg p-6 ${
-          theme === "light" ? "bg-white" : "bg-gray-700"
-        } rounded-lg shadow-lg`}
+        className={`w-full max-w-lg p-6 ${theme === "light" ? "bg-white" : "bg-gray-700"
+          } rounded-lg shadow-lg`}
       >
         <h2
-          className={`text-center text-2xl font-semibold ${
-            theme === "light" ? "text-gray-800" : "text-white"
-          } mb-6`}
+          className={`text-center text-2xl font-semibold ${theme === "light" ? "text-gray-800" : "text-white"
+            } mb-6`}
         >
           Register
         </h2>
@@ -97,7 +96,11 @@ const Register = () => {
             className="w-28 h-28 rounded-full border-4 border-gray-300"
           />
         </div>
-
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-100 text-red-800 border-l-4 border-red-500 p-2 mb-4">
+            {error}
+          </div>)}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name Input */}
           <div>
@@ -200,7 +203,7 @@ const Register = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-md hover:from-orange-600 hover:to-yellow-600 focus:outline-none"
+             className="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg text-large hover:from-blue-600 hover:to-purple-600 transition"
           >
             Register
           </button>

@@ -140,7 +140,7 @@ const DiscoverScreen = () => {
               >
                 {searchResults.map((result, index) => {
                   if (result.type === "user") {
-                    if (user._id == result._id ) return ''
+                    if (user?._id == result._id ) return ''
                     return (
                       
                       <div

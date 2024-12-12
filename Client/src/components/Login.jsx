@@ -4,9 +4,8 @@ import { login } from '../services/api';
 import Profile from './Profile'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn, setUser } from '../app/Slices/userSlice';
-import { Link, useNavigate } from 'react-router-dom'; 
+import { Link, useLocation, useNavigate } from 'react-router-dom'; 
 import UserProfile from './UserProfile';
-
 
 export default function Login() {
   const [userId, setUserId] = useState('');
@@ -15,6 +14,7 @@ export default function Login() {
   const [error, setError] = useState(null); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -42,14 +42,15 @@ export default function Login() {
     return <UserProfile />;
   }
 
+
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6">
       {/* Login Card */}
       <div className="w-full max-w-md md:max-w-lg bg-white rounded-xl shadow-lg p-8">
         {/* Title */}
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-6">
-          Welcome Back
-        </h2>
+        {<h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-6">
+          {location?.state ?   'Login First' :"Welcome Back"}
+        </h2>}
         <p className="text-gray-500 text-center mb-8">Login to continue exploring!</p>
 
         {/* Email Input */}
@@ -126,9 +127,9 @@ export default function Login() {
 
         {/* Forgot Password */}
         <div className="text-center mt-4">
-          <a href="#" className="text-purple-500 hover:text-blue-500 focus:text-purple-500 mt-2 text-sm transition">
+          <Link to={'/forget-passwrod'} className="text-purple-500 hover:text-blue-500 focus:text-purple-500 mt-2 text-sm transition">
             Forgot Password?
-          </a>
+          </Link>
         </div>
 
         {/* Or Divider */}

@@ -1,7 +1,8 @@
 import express from "express";
-import { registerUser, loginUser, logoutUser,getUserInfo, getUserProfile, updateUserProfile, deleteUser, createBlog, getAllBlogs, getBlog, updateBlog, deleteBlog, addComment, removeComment, addLike, removeLike, getLikes, getNotification, search, addFollowers, removeFollower, markAllASRead } from "../Contolers/controler.js";
+import { registerUser, loginUser, logoutUser,getUserInfo, getUserProfile, updateUserProfile, deleteUser, createBlog, getAllBlogs, getBlog, updateBlog, deleteBlog, addComment, removeComment, addLike, removeLike, getLikes, getNotification, search, addFollowers, removeFollower, markAllASRead, requestPasswordReset, resetPassword } from "../Contolers/controler.js";
 import { checkAuthenticaion } from "../Middlewares/authMiddleware.js";
 import multer from "multer";
+import { sendResetEmail } from "../Middlewares/mailSender.js";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
@@ -20,7 +21,7 @@ router.post("/create-blog", checkAuthenticaion, upload.single("coverImage"), cre
 router.get("/all-blogs", getAllBlogs);
 router.get("/blog/:identifier", getBlog);
 router.put("/blog/update", checkAuthenticaion, updateBlog);
-router.delete("/blog/delete", checkAuthenticaion, deleteBlog);
+router.post("/blog/delete", deleteBlog);
 
 // Comment Routes
 router.post("/blog/:blogId/comment", checkAuthenticaion, addComment);
@@ -42,4 +43,7 @@ router.put('/follow',checkAuthenticaion,addFollowers)
 router.put('/UnFollow',checkAuthenticaion,removeFollower)
 router.post('/notification/markAllAsRead',checkAuthenticaion,markAllASRead)
 
+//Reset Password
+router.post('/reset-email',requestPasswordReset)
+router.post('/reset-password',resetPassword)
 export default router;

@@ -12,6 +12,7 @@ const DetailsScreen = () => {
   const [likes, setLikes] = useState([]);
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [postId, setPostId] = useState('')
+  const [notLogged, setNotLoged] = useState(false)
 
   const user = useSelector((state) => state.user?.userData);
   const { identifier } = useParams();
@@ -35,6 +36,13 @@ const DetailsScreen = () => {
 
   // Handle adding a new review
   const handleAddReview = async (blogId, content) => {
+    if (!user) {
+      setNotLoged(true)
+      setTimeout(() => {
+        setNotLoged(false)
+      }, 1000);
+      return null
+    }
 
     await addComment(blogId, content).then((res) => {
       setNewReview('')
@@ -44,24 +52,42 @@ const DetailsScreen = () => {
 
   // Handle like button
   const handleLike = async (blogId) => {
-    if(post.likes?.some(like => like.user?._id == user?._id)){
-      
-     await removeLike(blogId).then(() => {
-    setLiked(!liked);
-  })
-  return
+    if (!user) {
+      setNotLoged(true)
+      setTimeout(() => {
+        setNotLoged(false)
+      }, 3000);
+      return null
+    }
+
+    if (post.likes?.some(like => like.user?._id == user?._id)) {
+
+      await removeLike(blogId).then(() => {
+        setLiked(!liked);
+      })
+      return
     }
     await addLike(blogId).then(() => {
       console.log("liked");
-    setLiked(!liked);
+      setLiked(!liked);
 
     }).catch((error) => console.log("Error : ", error)
     )
   };
 
+
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header Image with Rounded Corners */}
+      {notLogged && (
+  <span
+    className="bg-gray-400 h-8 w-36 text-white z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
+    role="alert"
+  >
+    Login First!!
+  </span>
+)}
       <div className="relative w-full ">
         <img
           src={post?.coverImage || "https://via.placeholder.com/300"}
@@ -131,7 +157,7 @@ const DetailsScreen = () => {
                 {post?.description || "Description not available."}
               </p>
               <div className="mt-6 flex items-center space-x-4" style={{ paddingBottom: "110px" }}>
-               <Link to={post?.author?._id == user?._id || user?.userId ? `/userProfile/${user.userId}` :`/profile/${post?.author?._id}`}> <img
+                <Link to={post?.author?._id == user?._id || user?.userId ? `/userProfile/${user?.userId}` : `/profile/${post?.author?._id}`}> <img
                   src={post?.author?.avatar || "https://via.placeholder.com/50"}
                   alt="Author"
                   className="w-12 h-12 rounded-full"

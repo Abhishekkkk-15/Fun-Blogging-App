@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaCommentDots } from "react-icons/fa"; // Icons for Edit and Message
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { follow, getBlog, getProfile, unFollow } from "../services/api";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../app/Slices/userSlice";
@@ -12,8 +12,9 @@ export default function ProfileComponent() {
   const [post, setPost] = useState([]);
   const [loading, setLoading] = useState(false);
   const logedUser = useSelector((state) => state.user.userData);
+  const [notLogged, setNotLoged] = useState(false)
   const dispatch = useDispatch();
-
+  const navigate = useNavigate()
   useEffect(() => {
     (async () => {
       try {
@@ -34,6 +35,13 @@ export default function ProfileComponent() {
   }, [identifier, logedUser]);
 
   const handleFollowing = async () => {
+    if (!logedUser) {
+      setNotLoged(true)
+      setTimeout(() => {
+        setNotLoged(false)
+      }, 1000);
+      return null
+    }
     try {
       if (logedUser?.following?.some((res) => res === user?._id || user?.userId)) {
         await unFollow(user?._id).then((res) => {
@@ -51,10 +59,22 @@ export default function ProfileComponent() {
     }
   };
 
+  if(!logedUser){
+    navigate('/login',{state:"Login first"})
+  }
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start p-4 space-y-6">
       {/* Profile Picture and Info */}
       <div className="text-center space-y-1">
+      {notLogged && (
+  <span
+    className="bg-gray-400 h-8 w-36 text-white z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
+    role="alert"
+  >
+    Login First!!
+  </span>
+)}
         <div className="relative">
           <img
             src={user?.avatar}
@@ -68,7 +88,7 @@ export default function ProfileComponent() {
         <div className="flex justify-center items-center space-x-6">
           <div className="text-center">
             <p className="text-lg font-bold">{post?.length || 0}</p>
-            <p className="text-gray-500 text-sm">Posts</p>
+            <p className="text-gray-500 text-sm">Blogs</p>
           </div>
           <div className="text-center">
             <p className="text-lg font-bold">{user?.followers?.length || 0}</p>

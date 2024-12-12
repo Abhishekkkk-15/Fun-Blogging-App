@@ -13,6 +13,10 @@ export const getBlog = (identifier) => axios.get(
 export const addNewPost = (data) => axios.post(
     `/create-blog`
   ,data,{ withCredentials: true });
+  
+  export const deletePost = (blogId) => axios.post(
+      `/blog/delete`
+    ,{blogId},{ withCredentials: true });
 
 
 export const addLike = (blogId) => axios.post(`/blog/${blogId}/like`, {}, { withCredentials: true });
@@ -52,3 +56,7 @@ export const search = (query,type) => axios.get('/search/',{params:{
   query:query,
   type:type
 }})
+
+
+export const requestPasswordReset = (email) => axios.post('/reset-email',{email},{withCredentials:true})
+export const resetPassword = (token,newPassword) => axios.post('/reset-password',{token,newPassword},{withCredentials:true})
