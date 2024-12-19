@@ -60,3 +60,17 @@ export const search = (query,type) => axios.get('/search/',{params:{
 
 export const requestPasswordReset = (email) => axios.post('/reset-email',{email},{withCredentials:true})
 export const resetPassword = (token,newPassword) => axios.post('/reset-password',{token,newPassword},{withCredentials:true})
+
+export const sideBarUsers = () => axios.get("/sidebar-user",{
+  withCredentials:true
+})
+
+export const getMessages = (userToChatId) => axios.get(`/getMessages/${userToChatId}`,{
+  withCredentials:true
+})
+export const sendMessage = (text,image,receiverId) => axios.post(`/sendMessage/${receiverId}`,{text,image},{
+  withCredentials:true
+})  
+export const getUnreadMessages = (userToChatId) => axios.get(`/getUnreadMessages/${userToChatId}`,{
+  withCredentials:true
+})  

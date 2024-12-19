@@ -186,6 +186,28 @@ const notificationSchema = new Schema(
     }
   );
 
+const messageSchema = mongoose.Schema({
+    senderId:{
+        type:mongoose.Types.ObjectId,
+        ref:"User",
+        required:true
+    },
+    receiverId:{
+        type:mongoose.Types.ObjectId,
+        ref:"User",
+        required:true
+    },
+    text:{
+        type:String
+    },
+    image:{
+        type:String
+    },
+    isRead:{
+        type: Boolean,
+        default:false
+    }
+},{timestamps:true})
 
 export const User = mongoose.model('User', userSchema);
 export const Blog = mongoose.model('Blog', postSchema);
@@ -193,4 +215,5 @@ export const Comment = mongoose.model('Comment', commentSchema);
 export const Category = mongoose.model('Category', categorySchema);
 export const Like = mongoose.model('Like', likeSchema);
 export const Notification = mongoose.model('Notification', notificationSchema);
+export const Message = mongoose.model('Message',messageSchema)
 

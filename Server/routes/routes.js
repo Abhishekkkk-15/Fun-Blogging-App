@@ -3,6 +3,7 @@ import { registerUser, loginUser, logoutUser,getUserInfo, getUserProfile, update
 import { checkAuthenticaion } from "../Middlewares/authMiddleware.js";
 import multer from "multer";
 import { sendResetEmail } from "../Middlewares/mailSender.js";
+import { getMesages, getUnreadMessages, getUserFromFollowing, sendMessage } from "../Contolers/messages.controler.js";
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
@@ -46,4 +47,10 @@ router.post('/notification/markAllAsRead',checkAuthenticaion,markAllASRead)
 //Reset Password
 router.post('/reset-email',requestPasswordReset)
 router.post('/reset-password',resetPassword)
+
+//Message's Route
+router.get('/sidebar-user',checkAuthenticaion,getUserFromFollowing)
+router.get('/getMessages/:userToChatId',checkAuthenticaion,getMesages)
+router.get('/getUnreadMessages/:receiverId',checkAuthenticaion,getUnreadMessages)
+router.post('/sendMessage/:receiverId',checkAuthenticaion,sendMessage)
 export default router;

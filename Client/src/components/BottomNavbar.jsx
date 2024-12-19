@@ -21,6 +21,12 @@ const BottomNavbar = () => {
           <span className="sr-only">Add</span>
         </button>
       </Link>
+      <Link to="/message">
+        <button className="text-gray-500 hover:text-blue-500 focus:text-purple-500 transition">
+        <i className="fa-regular fa-message"></i>
+          <span className="sr-only">Message</span>
+        </button>
+      </Link>
       <Link to="/login">
         <button className="text-gray-500 hover:text-blue-500 focus:text-purple-500 transition">
           <i className="fa-solid fa-user"></i>

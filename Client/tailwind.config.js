@@ -1,3 +1,4 @@
+import daisyui from 'daisyui'
 module.exports = {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
@@ -10,5 +11,8 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [daisyui],
+  daisyui: {
+    themes: ["light", "dark", "cupcake"],
+  },
 };

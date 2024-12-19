@@ -24,7 +24,7 @@ export default function Login() {
       .then((res) => {
         dispatch(setUser(res.data.data)); 
         dispatch(setLoggedIn(true)); 
-        navigate(`/userProfile/${res.data.data._id}`); 
+        navigate(`/userProfile`); 
       })
       .catch((err) => {
         setError(err.response.data.msg || 'An error occurred'); 

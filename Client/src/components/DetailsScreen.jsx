@@ -81,13 +81,13 @@ const DetailsScreen = () => {
     <div className="min-h-screen bg-white">
       {/* Header Image with Rounded Corners */}
       {notLogged && (
-  <span
-    className="bg-gray-400 h-8 w-36 text-white z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
-    role="alert"
-  >
-    Login First!!
-  </span>
-)}
+        <span
+          className="bg-gray-400 h-8 w-36 text-white z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
+          role="alert"
+        >
+          Login First!!
+        </span>
+      )}
       <div className="relative w-full ">
         <img
           src={post?.coverImage || "https://via.placeholder.com/300"}
@@ -131,8 +131,33 @@ const DetailsScreen = () => {
       {/* Content Section */}
       <div className="p-6">
         {/* Title */}
-        <h1 className="text-2xl font-bold mb-4">{post?.title || "Post Title"}</h1>
-
+        <h1 className="text-2xl font-bold mb-3">{post?.title || "Post Title"}</h1>
+        <div className="mt-4 flex items-center space-x-4 border-y-2 py-2 mb-3">
+          <Link
+            to={
+              post?.author?._id === user?._id || user?.userId
+                ? `/userProfile`
+                : `/profile/${post?.author?._id}`
+            }
+          >
+            <img
+              src={post?.author?.avatar || "https://via.placeholder.com/50"}
+              alt="Author"
+              className="w-14 h-14 rounded-full border-2 border-purple-500"
+            />
+          </Link>
+          <div>
+            <p className="font-bold text-gray-800 text-lg">{post?.author?.userName || "Unknown Author"}</p>
+            <div className="text-gray-500 text-sm flex flex-row">
+              {`${new Date(post?.createdAt).toLocaleDateString("en-US", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}`}
+            <span className="ml-3">{`${reviews.length} Comments`}</span>
+            </div>
+          </div>
+        </div>
         {/* Tab Options */}
         <div className="flex justify-around border-b mb-4">
           <button
@@ -153,21 +178,9 @@ const DetailsScreen = () => {
         <div>
           {activeTab === "description" && (
             <div>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-9">
                 {post?.description || "Description not available."}
               </p>
-              <div className="mt-6 flex items-center space-x-4" style={{ paddingBottom: "110px" }}>
-                <Link to={post?.author?._id == user?._id || user?.userId ? `/userProfile/${user?.userId}` : `/profile/${post?.author?._id}`}> <img
-                  src={post?.author?.avatar || "https://via.placeholder.com/50"}
-                  alt="Author"
-                  className="w-12 h-12 rounded-full"
-                />
-                </Link>
-                <div>
-                  {/* <p className="text-sm text-gray-500">By</p> */}
-                  <p className="font-bold text-gray-800">{post?.author?.userName || "Unknown Author"}</p>
-                </div>
-              </div>
             </div>
           )}
 

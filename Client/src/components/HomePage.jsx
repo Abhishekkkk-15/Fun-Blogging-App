@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { getBlogs, getNotifications, getUserInfo, markAllAsRead } from "../services/api";
+import React, { useState, useEffect } from "react";
+import { getBlogs, getNotifications, markAllAsRead } from "../services/api";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "../app/Slices/postReducer";
 import { Link } from "react-router-dom";
-import { setLoggedIn, setUser } from "../app/Slices/userSlice";
 import { FaBell } from "react-icons/fa";
 import { Menu, Transition } from "@headlessui/react";
 
@@ -15,55 +13,41 @@ const HomePage = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [page, setPage] = useState(1);
-  // const pageRef = useRef(1)
-
   const [hasMore, setHasMore] = useState(true);
 
   // Fetch Posts
- useEffect(() => {
-  if(!hasMore) return 
-    (async()=>{
-       // Stop fetching if no more posts 
-
-    try {
-      setLoading(true)
-      const response = await getBlogs(page, 3)
-      const newPosts = response.data.data;
-      console.log("hello its started")
-      console.log(response)
-      if (response.data.totalPage == response.data.currentPage ) {
-        console.log("its stoped fetching more data")
-      setLoading(false)
-      setHasMore(false); // No more data to fetch
+  useEffect(() => {
+    if (!hasMore) return;
+    (async () => {
       
-      } else {
-        setPosts((prevPosts) =>[...prevPosts, ...newPosts] )
-      }
-    } catch (error) {
-      setHasMore(false)
-      setLoading(false)
-      console.log("Error fetching posts:", error);
-    } finally {
-      setLoading(false);
-    }})()
-  
- }, [page]);
+      try {
+        setLoading(true);
+        const response = await getBlogs(page, );
+        const newPosts = response.data.data;
 
-  
+        if (response.data.totalPage === response.data.currentPage) {
+          setHasMore(false); // No more data to fetch
+        } else {
+          setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+        }
+      } catch (error) {
+        setHasMore(false);
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [page]);
 
   // Infinite Scroll Handler
-  const handleInfiniteScroll =() => {
+  const handleInfiniteScroll = () => {
     if (
       window.innerHeight + document.documentElement.scrollTop + 1 >=
       document.documentElement.scrollHeight
     ) {
-      // if (!loading && hasMore) {
-        console.log("it tregred")
-        setPage((prevPage) => prevPage + 1);
-
-      // }
+      setPage((prevPage) => prevPage + 1);
     }
-  }
+  };
 
   useEffect(() => {
     window.addEventListener("scroll", handleInfiniteScroll);
@@ -71,25 +55,6 @@ const HomePage = () => {
       window.removeEventListener("scroll", handleInfiniteScroll);
     };
   }, []);
-
-  
-
-  // Fetch User Info
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      if (!user) {
-        try {
-          const response = await getUserInfo();
-          const userInfo = response.data.userInfo;
-          dispatch(setUser(userInfo));
-          dispatch(setLoggedIn(true));
-        } catch (error) {
-          // console.error("Error fetching user info:", error);
-        }
-      }
-    };
-    fetchUserInfo();
-  }, [dispatch, user]);
 
   // Fetch Notifications
   useEffect(() => {
@@ -189,7 +154,7 @@ const HomePage = () => {
       </div>
 
       {/* Posts */}
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {posts.map((post, index) => (
           <div
             key={index}
@@ -207,7 +172,7 @@ const HomePage = () => {
                 <Link
                   to={
                     post.author?._id === user?._id
-                      ? `userProfile/${user?.userId}`
+                      ? `userProfile`
                       : `/profile/${post?.author?._id}`
                   }
                 >
@@ -237,8 +202,8 @@ const HomePage = () => {
 
       {/* Loading Indicator */}
       {loading && (
-        <div className="space-y-6 animate-pulse">
-          {[...Array(2)].map((_, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-6 animate-pulse">
+          {[...Array(4)].map((_, index) => (
             <div
               key={index}
               className="bg-gray-300 rounded-lg shadow-md overflow-hidden"

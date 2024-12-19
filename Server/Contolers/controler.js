@@ -155,15 +155,14 @@ const deleteUser = async (req, res) => {
     }
 };
 
-const getUserInfo = (req, res) => {
+const getUserInfo = async (req, res) => {
     try {
         const userInfo = req.user;
-
+        const newInfo = await User.findById(userInfo._id).select("-password")
         if (!userInfo) {
             return res.status(404).json({ message: "User information not found" });
         }
-
-        res.status(200).json({ userInfo });
+        res.status(200).json({ newInfo });
     } catch (error) {
         res.status(500).json({ message: "Error retrieving user information", error });
     }
