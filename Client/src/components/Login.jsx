@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn, setUser } from '../app/Slices/userSlice';
 import { Link, useLocation, useNavigate } from 'react-router-dom'; 
 import UserProfile from './UserProfile';
-
+import { socket } from './socket';
+// import  socketConnect from '../app/Slices/socketSlice';
 export default function Login() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +16,6 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
   const handleLogin = async () => {
     setLoading(true);
     setError(null); 
@@ -25,6 +25,12 @@ export default function Login() {
         dispatch(setUser(res.data.data)); 
         dispatch(setLoggedIn(true)); 
         navigate(`/userProfile`); 
+        console.log(res.data.data._id)
+        // if(socket.connected) return
+        if (!socket.connected) {
+          socket.auth = { userId: res.data.data._id };
+          socket.connect();
+        }
       })
       .catch((err) => {
         setError(err.response.data.msg || 'An error occurred'); 
@@ -32,13 +38,14 @@ export default function Login() {
       .finally(() => {
         setLoading(false);
       });
-  };
+    };
+    const selectedUser = useSelector(state => state.message.selectedUser) 
 
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn); 
+  // const isLoggedIn = useSelector((state) => state.user.isLoggedIn); 
   const user = useSelector((state) => state.user.userData); 
-  
 
-  if (isLoggedIn) {
+  if (user?._id) {
+
     return <UserProfile />;
   }
 

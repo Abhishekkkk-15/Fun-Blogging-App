@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-
+import {socket} from '../socket.js'
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./MessageSkeleton";
@@ -7,25 +7,42 @@ import { useDispatch, useSelector } from "react-redux";
 import { getMessages } from "../../services/api";
 import { setMessages } from "../../app/Slices/messageSlice";
 // import { formatMessageTime } from "../lib/utils";
+// import {io} from 'socket.io-client'
 
 const ChatContainer = () => { 
   const dispatch = useDispatch()
   const messages = useSelector(state => state.message.messages) || []
-  console.log(messages)
+
   const selectedUser = useSelector(state => state.message.selectedUser)
   const  authUser  = useSelector(state => state.user.userData)
   const messageEndRef = useRef(null);
   useEffect(() => {
-(async()=>{
-  console.log("its working")
-  await getMessages(selectedUser?._id).then(res => {
-    console.log(res)
-    dispatch(setMessages(res.data))
-  })
-  .catch(err => console.log(err))
-})()
-  }, [selectedUser]);
-  
+    const fetchMessages = async () => {
+      try {
+        console.log("Fetching messages");
+        const res = await getMessages(selectedUser?._id);
+        dispatch(setMessages(res.data));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchMessages();
+
+    const handleNewMessage = (data) => {
+      console.log("newMessage", data.newMessage);
+      // dispatch(setMessages((prevMessages) => [...prevMessages, data.newMessage]));
+      dispatch(setMessages(data.newMessage))
+    };
+
+    socket.on("newMessage", handleNewMessage);
+
+    return () => {
+      socket.off("newMessage", handleNewMessage); // Clean up listener
+    };
+  }, [selectedUser, dispatch]);
+
+ 
   useEffect(() => {
     if (messageEndRef.current && messages) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });

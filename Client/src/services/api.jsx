@@ -71,6 +71,6 @@ export const getMessages = (userToChatId) => axios.get(`/getMessages/${userToCha
 export const sendMessage = (text,image,receiverId) => axios.post(`/sendMessage/${receiverId}`,{text,image},{
   withCredentials:true
 })  
-export const getUnreadMessages = (userToChatId) => axios.get(`/getUnreadMessages/${userToChatId}`,{
+export const getUnreadMessages = (userToChatId) => axios.get(`/getUnreadMessages/${userToChatId}`,  {
   withCredentials:true
 })  

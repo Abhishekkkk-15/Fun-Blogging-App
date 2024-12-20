@@ -1,5 +1,7 @@
 import { Message, User } from "../Schema/schema.js"
 import uploadOnCloudinary from "../Middlewares/cloudinary.js"
+import { getReciverSocketId, io } from "../lib/socket.js"
+// import { Socket } from "socket.io"
 
 const getUserFromFollowing = async(req,res) =>{
     try {
@@ -40,12 +42,18 @@ const sendMessage = async(req,res) =>{
             const uplaodResponse =await uploadOnCloudinary(image)
             imageUrl = uplaodResponse
         }
-        const newMessage = await Message.create({
+        const newMessage = new Message({
             senderId,
-            receiverId,
+            receiverId, 
             text,
             image:imageUrl
         })
+        newMessage.save()
+        const id = getReciverSocketId(receiverId)
+        console.log(id)
+        io.to(id).emit("newMessage", {
+            newMessage
+          });
         res.status(200).json({newMessage})
     } catch (error) {
         console.log("Error while Sending message  : ",error.message)

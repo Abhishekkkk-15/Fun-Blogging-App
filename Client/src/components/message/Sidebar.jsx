@@ -12,7 +12,7 @@ const Sidebar = () => {
   const [unreadCounts, setUnreadCounts] = useState({});
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const selectedUser = useSelector((state) => state.message.selectedUser);
-
+  const onlineUsers = useSelector(state => state.message.onlineUsers)
   // Fetch sidebar users
   useEffect(() => {
     const fetchUsers = async () => {
@@ -92,13 +92,11 @@ const Sidebar = () => {
                 alt={user.name}
                 className="size-12 object-cover rounded-full"
               />
-              {unreadCounts[user._id] > 0 && (
+               {onlineUsers.includes(user._id) && (
                 <span
                   className="absolute bottom-0 right-0 size-3 bg-green-500 
-                  rounded-full ring-2 ring-zinc-900 flex items-center justify-center text-xs text-white"
-                >
-                  {unreadCounts[user._id]}
-                </span>
+                  rounded-full ring-2 ring-zinc-900"
+                />
               )}
             </div>
 

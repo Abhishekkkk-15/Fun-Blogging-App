@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import WelcomeScreen from './components/WelcomeScreen';
 import DetailsScreen from './components/DetailsScreen';
@@ -13,50 +13,84 @@ import AddPost from './components/AddPost';
 import EditProfile from './components/EditProfile';
 import ForgetPassword from './components/ForgetPassword';
 import ResetPassword from './components/ResetPassword';
-import { useDispatch,useSelector } from 'react-redux';
-import { getUserInfo} from './services/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserInfo } from './services/api';
 import { setLoggedIn, setUser } from './app/Slices/userSlice';
 import Messaging from './components/message/Messaging';
-
+// import socketConnect from './app/Slices/socketSlice'; 
+import { socket } from './components/socket';
+import { setOnlineUsers } from './app/Slices/messageSlice';
 
 function App() {
   const dispatch = useDispatch()
+  const [userId, setUserId] = useState('')
   const user = useSelector(state => state.user.userData)
   useEffect(() => {
+    let isMounted = true; // Track if component is still mounted
+
     const fetchUserInfo = async () => {
-     
-        try {
-          const response = await getUserInfo();
-          const userInfo = response.data.newInfo;
-          dispatch(setUser(userInfo));
-          dispatch(setLoggedIn(true));
-        } catch (error) {
-          console.error("Error fetching user info:", error);
-        }
-      
+      try {
+        const response = await getUserInfo();
+        if (!isMounted) return; // Prevent state updates if unmounted
+
+        const userInfo = response.data.newInfo;
+        setUserId(userInfo._id)
+        dispatch(setUser(userInfo));
+      } catch (error) {
+        console.error("Error fetching user info:", error.response?.data?.message || error.message);
+      }
     };
+
     fetchUserInfo();
+
+    // Cleanup on unmount
+    return () => {
+      isMounted = false;
+
+      socket.disconnect()
+    };
   }, []);
+
+  useEffect(() => {
+    if (userId) {
+      if (!socket.connected) {
+        socket.auth = { userId }; // Use the updated userId state
+        socket.connect();
+      }
+    }
+    const handleOnlineUser = (data) => {
+      dispatch(setOnlineUsers(data))
+      // console.log(data);
+    };
+
+    socket.on('onlineUser', handleOnlineUser);
+
+
+    return () => {
+      socket.disconnect()
+    };
+  }, [userId,dispatch]);
+
   return (
     <div className="bg-[#fefefe] min-h-screen">
-       <Router>
-      <Routes>
-        <Route path="/hero" element={<WelcomeScreen/>} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/details/:identifier" element={<DetailsScreen />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Register />} />
-        <Route path="/search" element={<DiscoverScreen />} />
-        <Route path="/profile/:identifier" element={<ProfileComponent />} />
-        <Route path="/userProfile" element={user ? <UserProfile /> : <Login />} />
-        <Route path="/add-blog" element={<AddPost />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/forget-passwrod" element={<ForgetPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/message" element={<Messaging />} />
-      </Routes>
-      <BottomNavbar/>
-    </Router>
+      <Router>
+        <Routes>
+          <Route path="/hero" element={<WelcomeScreen />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/details/:identifier" element={<DetailsScreen />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Register />} />
+          <Route path="/search" element={<DiscoverScreen />} />
+          <Route path="/profile/:identifier" element={<ProfileComponent />} />
+          <Route path="/userProfile" element={user?._id ? <UserProfile /> : <Login />} />
+          <Route path="/add-blog" element={<AddPost />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/forget-passwrod" element={<ForgetPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/message" element={<Messaging />} />
+        </Routes>
+        <BottomNavbar />
+      </Router>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 const HomePage = () => {
   const selectedUser = useSelector(state => state.message.selectedUser  ) 
-
+ 
   return (
     <div className="h-screen bg-base-200 mb-12">
       <div className="flex items-center justify-center pt-20 px-4">

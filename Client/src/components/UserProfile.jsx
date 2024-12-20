@@ -7,12 +7,12 @@ import { deletePost, getBlog, logout } from '../services/api';
 import { setLoggedIn, setUser } from '../app/Slices/userSlice';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import Masonry from 'react-masonry-css'; // Import react-masonry-css for the masonry layout
+import { socket } from './socket';
 
 export default function UserProfile({ log }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user?.userData);
-  console.log(user)
   const navigate = useNavigate(); // Initialize useNavigate hook
   const [tryToDelete,setTryToDelete] = useState(false)
   const [userPosts, setUserPosts] = useState([]);
@@ -22,7 +22,7 @@ export default function UserProfile({ log }) {
       .then(() => {
         dispatch(setUser(null)); // Clear user state
         dispatch(setLoggedIn(false));
-        // navigate('/login');
+        socket.disconnect
       })
       .catch(() => {
         console.log('Error while logging out user!');
@@ -52,7 +52,6 @@ export default function UserProfile({ log }) {
   const handleDelete = async(blogId) =>{
     console.log(blogId)
     await deletePost(blogId).then(res => {
-      console.log(res)
       setTryToDelete(true)
     })
     .catch(err => console.log(err))
