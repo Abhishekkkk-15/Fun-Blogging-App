@@ -78,7 +78,7 @@ function App() {
   return (
     <div className="bg-[#fefefe] min-h-screen">
       <Router>
-        <Routes>
+        <Routes>  
           <Route path="/" element={<HomePage />} />
           <Route path="/details/:identifier" element={ user?._id ? <DetailsScreen /> : <Login/>} />
           <Route path="/login" element={<Login />} />

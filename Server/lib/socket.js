@@ -26,9 +26,8 @@ io.on('connection', (socket) => {
       }
     userSocketMap[userId] = socket.id
     console.log("User connected ", socket.id)
-    console.log("MongoId ", userId)
+    // console.log("MongoId ", userId)
     io.emit("onlineUser", Object.keys(userSocketMap))
-    console.log(Object.keys(userSocketMap))
     socket.on('disconnect', () => {
         delete userSocketMap[userId]
         console.log("User disconnected ", socket.id)
