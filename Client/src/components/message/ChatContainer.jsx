@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import {socket} from '../socket.js'
+import {socket} from '../../lib/socket.js'
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./MessageSkeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { getMessages } from "../../services/api";
 import { setMessages } from "../../app/Slices/messageSlice";
-// import { formatMessageTime } from "../lib/utils";
+import { formatMessageTime } from "../../lib/utils";
 // import {io} from 'socket.io-client'
 
 const ChatContainer = () => { 
@@ -19,19 +19,16 @@ const ChatContainer = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        console.log("Fetching messages");
         const res = await getMessages(selectedUser?._id);
         dispatch(setMessages(res.data));
       } catch (err) {
-        console.log(err);
+        console.error(err?.data?.msg);
       }
     };
 
     fetchMessages();
 
     const handleNewMessage = (data) => {
-      console.log("newMessage", data.newMessage);
-      // dispatch(setMessages((prevMessages) => [...prevMessages, data.newMessage]));
       dispatch(setMessages(data.newMessage))
     };
 
@@ -85,7 +82,7 @@ const ChatContainer = () => {
             </div>
             <div className="chat-header mb-1">
               <time className="text-xs opacity-50 ml-1">
-                {/* {formatMessageTime(message.createdAt)} */}
+                {formatMessageTime(message.createdAt)}
               </time>
             </div>
             <div className="chat-bubble flex flex-col">

@@ -37,6 +37,10 @@ export const signup = (formData) => axios.post('/register',formData,{
   withCredentials: true,
 })
 
+export const changePassword = (oldPassword,newPassword) => axios.put('/change-password',{oldPassword,newPassword},{
+  withCredentials: true,
+})
+
 
 export const getUserInfo = () => axios.post('/userinfo',{},{withCredentials:true})
 export const getProfile = (identifier) => axios.post('/profile',{identifier},{withCredentials:true})
@@ -45,6 +49,8 @@ export const updateUserProfile = (updatedData) => axios.put('/profile/update',up
 export const follow = (toFollow) => axios.put('/follow',{toFollow},{withCredentials:true})
 
 export const unFollow = (toUnfollow) => axios.put('/unFollow',{toUnfollow},{withCredentials:true})
+
+export const fetchFollow = () => axios.get('/fetchFollow',{withCredentials:true})
 
 export const getNotifications = () => axios.get('/notification',{
   withCredentials:true
@@ -71,6 +77,6 @@ export const getMessages = (userToChatId) => axios.get(`/getMessages/${userToCha
 export const sendMessage = (text,image,receiverId) => axios.post(`/sendMessage/${receiverId}`,{text,image},{
   withCredentials:true
 })  
-export const getUnreadMessages = (userToChatId) => axios.get(`/getUnreadMessages/${userToChatId}`,  {
+export const getUnreadMessages = (receiverId) => axios.get(`/getUnreadMessages/${receiverId}`,  {
   withCredentials:true
 })  

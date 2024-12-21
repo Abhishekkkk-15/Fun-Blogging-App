@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import WelcomeScreen from './components/WelcomeScreen';
 import DetailsScreen from './components/DetailsScreen';
 import DiscoverScreen from './components/DiscoverScreen';
 import BottomNavbar from './components/BottomNavbar';
@@ -18,8 +17,13 @@ import { getUserInfo } from './services/api';
 import { setLoggedIn, setUser } from './app/Slices/userSlice';
 import Messaging from './components/message/Messaging';
 // import socketConnect from './app/Slices/socketSlice'; 
-import { socket } from './components/socket';
+import { socket } from './lib/socket.js';
 import { setOnlineUsers } from './app/Slices/messageSlice';
+import ShowFollowers from './components/ShowFollowers';
+import ShowFollowing from './components/ShowFollowing';
+import Account from './components/Account';
+import ChangePassword from './components/ChangePassword';
+import AboutUs from './components/AboutUs';
 
 function App() {
   const dispatch = useDispatch()
@@ -75,19 +79,23 @@ function App() {
     <div className="bg-[#fefefe] min-h-screen">
       <Router>
         <Routes>
-          <Route path="/hero" element={<WelcomeScreen />} />
           <Route path="/" element={<HomePage />} />
-          <Route path="/details/:identifier" element={<DetailsScreen />} />
+          <Route path="/details/:identifier" element={ user?._id ? <DetailsScreen /> : <Login/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Register />} />
-          <Route path="/search" element={<DiscoverScreen />} />
-          <Route path="/profile/:identifier" element={<ProfileComponent />} />
+          <Route path="/search" element={ user?._id ?  <DiscoverScreen /> : <Login/>} />
+          <Route path="/profile/:identifier" element={ user?._id ? <ProfileComponent />  : <Login/>} />
           <Route path="/userProfile" element={user?._id ? <UserProfile /> : <Login />} />
-          <Route path="/add-blog" element={<AddPost />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/account" element={user?._id ? <Account /> : <Login />} />
+          <Route path="/add-blog" element={ user?._id ? <AddPost /> : <Login/>} />
+          <Route path="/edit-profile" element={ user?._id ? <EditProfile /> : <Login/>} />
           <Route path="/forget-passwrod" element={<ForgetPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/message" element={<Messaging />} />
+          <Route path="/message" element={ user?._id ? <Messaging /> : <Login/>} />
+          <Route path="/followers" element={ user?._id ? <ShowFollowers /> : <Login/>} />
+          <Route path="/following" element={ user?._id ? <ShowFollowing /> : <Login/>} />
+          <Route path="/change-password" element={ user?._id ? <ChangePassword /> : <Login/>} />
+          <Route path="/aboutus" element={ user?._id ? <AboutUs /> : <Login/>} />
         </Routes>
         <BottomNavbar />
       </Router>

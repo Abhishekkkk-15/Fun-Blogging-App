@@ -142,6 +142,27 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user._id;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ msg: "User Not Found!" });
+
+        if (user.password !== oldPassword) {
+            return res.status(400).json({ msg: "Invalid Password" });
+        }
+
+        user.password = newPassword;
+        const updatedUser = await user.save();
+
+        res.status(200).json({ msg: "Password Changed Successfully!", data: updatedUser });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+}
+
 // Delete User
 const deleteUser = async (req, res) => {
     const userId = req.body.userId;
@@ -182,7 +203,7 @@ const createBlog = async (req, res) => {
             title,
             coverImage,
             author,
-            category,
+            Category:category,
             description
         });
         await newPost.save();
@@ -332,7 +353,7 @@ const addComment = async (req, res) => {
         }
 
         blog.comments.push(comment.id);
-        await blog.save();
+        await blog.save()
         res.status(201).json({ msg: "Comment Added!", comment });
     } catch (error) {
         res.status(500).json({ msg: `Error Adding Comment: ${error.message}` });
@@ -390,6 +411,7 @@ const addLike = async (req, res) => {
 
         res.status(201).json({ msg: "Blog liked successfully!" });
     } catch (error) {
+        console.log("Error while likeing the blog",error)
         res.status(500).json({ msg: `Server Error: ${error.message}` });
     }
 };
@@ -413,6 +435,7 @@ const removeLike = async (req, res) => {
 
         res.status(200).json({ msg: "Like removed successfully!" });
     } catch (error) {
+        console.log("Error in removing the like",error)
         res.status(500).json({ msg: `Server Error: ${error.message}` });
     }
 };
@@ -509,7 +532,7 @@ const search = async (req, res) => {
             results = await Blog.find({
                 $or: [
                     { title: searchRegax },
-                    { description: searchRegax },
+                    // { description: searchRegax },
                     { Category: searchRegax },
                 ]
             })
@@ -651,6 +674,20 @@ const removeFollower = async (req, res) => {
     }
 };
 
+const getFollowersAndFollowing = async(req,res) =>{
+    const userId = req.user._id
+   try {
+     if(!userId) return res.status(404).json({msg:"User Id not provided"})
+     const followers = await User.findById(userId).select('followers').populate('followers','avatar _id userName name')    
+     const following = await User.findById(userId).select('following').populate('following','avatar _id userName name') 
+     if(!followers || !following) return res.status(404).json({msg:"You are lonely"})
+     res.status(200).json({followers,following})
+   } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Error while fetching followers and following !', error: error.message });
+   }   
+}
+
 //Password reset
 const requestPasswordReset = async(req,res)=>{
     const {email} = req.body || req.user
@@ -696,6 +733,7 @@ export {
     logoutUser,
     getUserProfile,
     updateUserProfile,
+    changePassword,
     deleteUser,
     createBlog,
     getAllBlogs,
@@ -713,5 +751,6 @@ export {
     removeFollower,
     addFollowers,
     requestPasswordReset,
-    resetPassword
+    resetPassword,
+    getFollowersAndFollowing
 };

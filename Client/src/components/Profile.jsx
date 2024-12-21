@@ -5,7 +5,7 @@ import { follow, getBlog, getProfile, unFollow } from "../services/api";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../app/Slices/userSlice";
 import Masonry from 'react-masonry-css'; // Import Masonry
-
+import { setSelectedUser } from "../app/Slices/messageSlice";
 export default function ProfileComponent() {
   const [user, setProfileUser] = useState({});
   const { identifier } = useParams();
@@ -28,7 +28,7 @@ export default function ProfileComponent() {
         setPost(blogRes.data.data);
         setLoading(false);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         setLoading(false);
       }
     })();
@@ -45,19 +45,21 @@ export default function ProfileComponent() {
     try {
       if (logedUser?.following?.some((res) => res === user?._id || user?.userId)) {
         await unFollow(user?._id).then((res) => {
-          console.log(res);
           dispatch(setUser(res.data.data));
-        }).catch(err => console.log(err));
+        }).catch(err => console.error(err));
       } else {
         await follow(user._id).then((res) => {
-          console.log(res);
           dispatch(setUser(res.data.data));
-        }).catch((error) => console.log(error));
+        }).catch((error) => console.error(error));
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+  const handleSelectedUser = () =>{
+    dispatch(setSelectedUser(user))
+  }
 
   if(!logedUser){
     navigate('/login',{state:"Login first"})
@@ -109,9 +111,11 @@ export default function ProfileComponent() {
         >
           {logedUser?.following?.some((res) => res === user?._id) ? "Unfollow" : "Follow"}
         </button>
+        <Link to="/message" onClick={handleSelectedUser} >
         <button className="flex items-center px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
           <FaCommentDots className="mr-2 text-gray-700" /> Message
         </button>
+        </Link>
       </div>
 
       {/* Masonry Image Grid */}

@@ -3,6 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const userSchema = new Schema({
     avatar:{
         type:String,
+        default:'https://via.placeholder.com/150'
     },
     name:{
         type:String,
@@ -68,14 +69,14 @@ const postSchema = new Schema({
         maxlength :[2000, "Word length must be under 2000 character's "],
         required:true
     },
-    Category:[{
+    Category:{
         type: String,
         required: [true, "Category name is required."]
         // enum: {
         //     values: ["quotes","Anime","Technology", "Health", "Education", "Entertainment", "Sports", "Lifestyle", "Science"],
         //     message: "{VALUE} is not a valid category. Please select a predefined category."
         // }
-    }],
+    },
     comments:[{
         type:mongoose.Schema.ObjectId, 
         ref:'Comment'

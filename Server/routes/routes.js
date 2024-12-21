@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, logoutUser,getUserInfo, getUserProfile, updateUserProfile, deleteUser, createBlog, getAllBlogs, getBlog, updateBlog, deleteBlog, addComment, removeComment, addLike, removeLike, getLikes, getNotification, search, addFollowers, removeFollower, markAllASRead, requestPasswordReset, resetPassword } from "../Contolers/controler.js";
+import { registerUser, loginUser, logoutUser,getUserInfo,getFollowersAndFollowing, getUserProfile, updateUserProfile, deleteUser, createBlog, getAllBlogs, getBlog, updateBlog, deleteBlog, addComment, removeComment, addLike, removeLike, getLikes, getNotification, search, addFollowers, removeFollower, markAllASRead, requestPasswordReset, resetPassword, changePassword } from "../Contolers/controler.js";
 import { checkAuthenticaion } from "../Middlewares/authMiddleware.js";
 import multer from "multer";
 import { sendResetEmail } from "../Middlewares/mailSender.js";
@@ -14,6 +14,7 @@ router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.post("/profile", getUserProfile);
 router.put("/profile/update", checkAuthenticaion, upload.single("avatar"), updateUserProfile);
+router.put("/change-password",checkAuthenticaion,changePassword)
 router.delete("/delete", checkAuthenticaion, deleteUser);
 router.post("/userinfo",checkAuthenticaion,getUserInfo)
 
@@ -43,6 +44,7 @@ router.get('/search',search)
 router.put('/follow',checkAuthenticaion,addFollowers)
 router.put('/UnFollow',checkAuthenticaion,removeFollower)
 router.post('/notification/markAllAsRead',checkAuthenticaion,markAllASRead)
+router.get('/fetchFollow',checkAuthenticaion,getFollowersAndFollowing)
 
 //Reset Password
 router.post('/reset-email',requestPasswordReset)

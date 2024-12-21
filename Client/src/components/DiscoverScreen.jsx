@@ -40,48 +40,17 @@ const DiscoverScreen = () => {
   };
 
   const categories = [
-    { name: "Technology", img: "https://source.unsplash.com/random/800x600/?technology" },
-    { name: "Anime", img: "https://source.unsplash.com/random/800x600/?anime" },
-    { name: "Lifestyle", img: "https://source.unsplash.com/random/800x600/?lifestyle" },
-    { name: "Health", img: "https://source.unsplash.com/random/800x600/?health" },
-    { name: "Education", img: "https://source.unsplash.com/random/800x600/?education" },
-    { name: "Business", img: "https://source.unsplash.com/random/800x600/?business" },
-    { name: "Finance", img: "https://source.unsplash.com/random/800x600/?finance" },
-    { name: "Travel", img: "https://source.unsplash.com/random/800x600/?travel" },
-    { name: "Food", img: "https://source.unsplash.com/random/800x600/?food" },
-    { name: "Fitness", img: "https://source.unsplash.com/random/800x600/?fitness" },
-    { name: "Sports", img: "https://source.unsplash.com/random/800x600/?sports" },
-    { name: "Entertainment", img: "https://source.unsplash.com/random/800x600/?entertainment" },
-    { name: "Politics", img: "https://source.unsplash.com/random/800x600/?politics" },
-    { name: "Science", img: "https://source.unsplash.com/random/800x600/?science" },
-    { name: "Art", img: "https://source.unsplash.com/random/800x600/?art" },
-    { name: "Culture", img: "https://source.unsplash.com/random/800x600/?culture" },
-    { name: "Gaming", img: "https://source.unsplash.com/random/800x600/?gaming" },
-    { name: "Music", img: "https://source.unsplash.com/random/800x600/?music" },
-    { name: "Movies", img: "https://source.unsplash.com/random/800x600/?movies" },
-    { name: "Fashion", img: "https://source.unsplash.com/random/800x600/?fashion" },
-    { name: "Photography", img: "https://source.unsplash.com/random/800x600/?photography" },
-    { name: "Books", img: "https://source.unsplash.com/random/800x600/?books" },
-    { name: "News", img: "https://source.unsplash.com/random/800x600/?news" },
-    { name: "Marketing", img: "https://source.unsplash.com/random/800x600/?marketing" },
-    { name: "History", img: "https://source.unsplash.com/random/800x600/?history" },
-    { name: "Religion", img: "https://source.unsplash.com/random/800x600/?religion" },
-    { name: "Parenting", img: "https://source.unsplash.com/random/800x600/?parenting" },
-    { name: "Environment", img: "https://source.unsplash.com/random/800x600/?environment" },
-    { name: "Psychology", img: "https://source.unsplash.com/random/800x600/?psychology" },
-    { name: "Self-Improvement", img: "https://source.unsplash.com/random/800x600/?self-improvement" },
-    { name: "Startup", img: "https://source.unsplash.com/random/800x600/?startup" },
-    { name: "Design", img: "https://source.unsplash.com/random/800x600/?design" },
-    { name: "Architecture", img: "https://source.unsplash.com/random/800x600/?architecture" },
-    { name: "Real Estate", img: "https://source.unsplash.com/random/800x600/?real-estate" },
-    { name: "Automotive", img: "https://source.unsplash.com/random/800x600/?automotive" },
-    { name: "Adventure", img: "https://source.unsplash.com/random/800x600/?adventure" },
+    { name: "Technology", img: "https://tse1.mm.bing.net/th?id=OIP.89uvk8TA6-reQ7koKTfAwwHaEX&pid=Api&P=0&h=220" },
+    { name: "Anime", img: "https://tse3.mm.bing.net/th?id=OIP.EZ4DWvPlOVlzLuw69-LHgAHaFj&pid=Api&P=0&h=220" },
+    { name: "Lifestyle", img: "https://tse3.mm.bing.net/th?id=OIP.Iq83AeAAQlexww07VBVWMQHaEK&pid=Api&P=0&h=220" },
+    { name: "Health", img: "https://tse3.mm.bing.net/th?id=OIP.ioXXQsNT91yIiKapkewCfgHaF7&pid=Api&P=0&h=220" },
+    { name: "Nature", img: "https://tse2.mm.bing.net/th?id=OIP.juDo8a_p5VtZ7imXbO5ErQHaEK&pid=Api&P=0&h=220" },
   ];
 
   useEffect(() => {
     getBlogs(1, 4)
       .then(res => setNewPost(res.data.data))
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   }, []);
 
   // Debounced search function
@@ -120,6 +89,7 @@ const DiscoverScreen = () => {
                 src={category.img}
                 alt={category.name}
                 className="w-12 h-12 rounded-full"
+                onClick={() => fetchSearchResults(category.name)}
               />
               <span className="text-sm">{category.name}</span>
             </div>
@@ -134,7 +104,7 @@ const DiscoverScreen = () => {
             <h2 className="font-semibold mb-4">Search Results</h2>
             <div className="space-y-4">
               <Masonry
-                breakpointCols={{ 320: 1, 480: 2, 768: 3, 1024: 4 }}
+                breakpointCols={{ 320: 1, 480: 1, 768: 2, 1024: 4 }}
                 className="flex gap-4"
                 columnClassName="masonry-column"
               >
@@ -166,18 +136,18 @@ const DiscoverScreen = () => {
                     return (
                       <div
                         key={index}
-                        className="bg-white rounded-lg shadow-md overflow-hidden mb-5"
+                        className="rounded-lg shadow-md overflow-hidden mb-5"
                       >
                         <Link to={`/details/${result._id}`}>
                           <img
                             src={result.coverImage}
                             alt={result.title}
-                            className="h-28 w-full object-cover"
+                            className="h-36 w-full object-cover lg:h-48"
                           />
                         </Link>
-                        <div className="p-3">
+                        {/* <div className="p-3">
                           <h3 className="text-sm font-semibold">{result.title}</h3>
-                        </div>
+                        </div> */}
                       </div>
                     );
                   } else {

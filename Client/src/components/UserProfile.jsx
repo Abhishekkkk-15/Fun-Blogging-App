@@ -7,7 +7,7 @@ import { deletePost, getBlog, logout } from '../services/api';
 import { setLoggedIn, setUser } from '../app/Slices/userSlice';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import Masonry from 'react-masonry-css'; // Import react-masonry-css for the masonry layout
-import { socket } from './socket';
+import { socket } from '../lib/socket.js';
 
 export default function UserProfile({ log }) {
   const dispatch = useDispatch();
@@ -22,10 +22,10 @@ export default function UserProfile({ log }) {
       .then(() => {
         dispatch(setUser(null)); // Clear user state
         dispatch(setLoggedIn(false));
-        socket.disconnect
+        socket.disconnect()
       })
       .catch(() => {
-        console.log('Error while logging out user!');
+        console.error('Error while logging out user!');
       });
   };
 
@@ -50,12 +50,28 @@ export default function UserProfile({ log }) {
   };
 
   const handleDelete = async(blogId) =>{
-    console.log(blogId)
     await deletePost(blogId).then(res => {
       setTryToDelete(true)
     })
-    .catch(err => console.log(err))
+    .catch(err => console.error(err?.response?.data?.msg))
   }
+
+  const shareContent = async (_id) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Fun Blogging App',
+          text: 'Check out this Blog Post!',
+          url: `/details/${_id}`, // Share the current URL
+        });
+        console.log('Content shared successfully!');
+      } catch (error) {
+        console.error('Error sharing content:', error);
+      }
+    } else {
+      alert('Share feature not supported on this device/browser');
+    }
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center p-4">
@@ -77,20 +93,20 @@ export default function UserProfile({ log }) {
             <Menu.Items className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
-                  <button
+                  <Link to="/account"
                     className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm text-gray-700`}
                   >
                     Account
-                  </button>
+                  </Link>
                 )}
               </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
-                  <button
+                  <Link to="/aboutus"
                     className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm text-gray-700`}
                   >
-                    Contact Us
-                  </button>
+                    About us
+                  </Link>
                 )}
               </Menu.Item>
               <Menu.Item>
@@ -111,7 +127,7 @@ export default function UserProfile({ log }) {
       {/* Profile Section */}
       <div className="text-center mt-6">
         <img
-          src={user?.avatar}
+          src={user?.avatar || 'https://via.placeholder.com/150'}
           alt="Profile"
           className="w-24 h-24 rounded-full mx-auto"
         />
@@ -127,14 +143,18 @@ export default function UserProfile({ log }) {
 
       {/* Stats Section */}
       <div className="flex justify-around w-full mt-6">
+        <Link to="/followers" className="text-center cursor-pointer">
         <div className="text-center cursor-pointer">
           <p className="text-xl font-bold">{user?.followers?.length || 0}</p>
           <p className="text-gray-500 text-sm">Followers</p>
         </div>
+        </Link>
+        <Link to="/following" className="text-center cursor-pointer">
         <div className="text-center cursor-pointer">
           <p className="text-xl font-bold">{user?.following?.length || 0}</p>
           <p className="text-gray-500 text-sm">Following</p>
         </div>
+        </Link>
         <div className="text-center">
           <p className="text-xl font-bold">{userPosts.length}</p>
           <p className="text-gray-500 text-sm">Blogs</p>
@@ -183,7 +203,7 @@ export default function UserProfile({ log }) {
                       <Menu.Item>
                         {({ active }) => (
                           <button
-                            onClick={() => console.log("Share post:", post._id)}
+                            onClick={() => shareContent(post?._id)}
                             className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
                           >
                             Share

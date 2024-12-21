@@ -22,15 +22,18 @@ io.on('connection', (socket) => {
     if (!userId) {
         console.error('User ID missing in handshake');
         socket.disconnect();
-        return;
+        // return;
       }
     userSocketMap[userId] = socket.id
     console.log("User connected ", socket.id)
     console.log("MongoId ", userId)
-    socket.emit("onlineUser", Object.keys(userSocketMap))
+    io.emit("onlineUser", Object.keys(userSocketMap))
     console.log(Object.keys(userSocketMap))
     socket.on('disconnect', () => {
+        delete userSocketMap[userId]
         console.log("User disconnected ", socket.id)
+    io.emit("onlineUser", Object.keys(userSocketMap))
+
     })
 })
 

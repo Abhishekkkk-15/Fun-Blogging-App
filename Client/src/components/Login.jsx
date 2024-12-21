@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoggedIn, setUser } from '../app/Slices/userSlice';
 import { Link, useLocation, useNavigate } from 'react-router-dom'; 
 import UserProfile from './UserProfile';
-import { socket } from './socket';
-// import  socketConnect from '../app/Slices/socketSlice';
+import { socket } from '../lib/socket.js';
+
 export default function Login() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -25,8 +25,6 @@ export default function Login() {
         dispatch(setUser(res.data.data)); 
         dispatch(setLoggedIn(true)); 
         navigate(`/userProfile`); 
-        console.log(res.data.data._id)
-        // if(socket.connected) return
         if (!socket.connected) {
           socket.auth = { userId: res.data.data._id };
           socket.connect();
@@ -41,7 +39,6 @@ export default function Login() {
     };
     const selectedUser = useSelector(state => state.message.selectedUser) 
 
-  // const isLoggedIn = useSelector((state) => state.user.isLoggedIn); 
   const user = useSelector((state) => state.user.userData); 
 
   if (user?._id) {
@@ -144,16 +141,6 @@ export default function Login() {
           <hr className="flex-grow border-gray-300" />
           <span className="px-4 text-gray-500">OR</span>
           <hr className="flex-grow border-gray-300" />
-        </div>
-
-        {/* Social Login Buttons */}
-        <div className="flex justify-center gap-4">
-          <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            <FaFacebookF className="mr-2" /> Facebook
-          </button>
-          <button className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-            <FaGoogle className="mr-2" /> Google
-          </button>
         </div>
 
         {/* Sign Up Link */}

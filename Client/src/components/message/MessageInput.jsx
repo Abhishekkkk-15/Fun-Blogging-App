@@ -42,7 +42,6 @@ const MessageInput = () => {
         imagePreview,
          selectedUser?._id
      ).then(res=>{
-       console.log(res)
        dispatch(setMessages([...messages,res.data.newMessage]))
       })
       .catch(err => console.log(err))

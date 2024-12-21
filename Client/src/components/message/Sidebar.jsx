@@ -3,14 +3,12 @@ import SidebarSkeleton from "./SidebarSkeleton";
 import { Users } from "lucide-react";
 import { setSelectedUser } from "../../app/Slices/messageSlice.js";
 import { useDispatch, useSelector } from "react-redux";
-import { getUnreadMessages, sideBarUsers } from "../../services/api.jsx";
+import { sideBarUsers } from "../../services/api.jsx";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const [isUsersLoading, setIsUsersLoading] = useState(true);
   const [users, setUsers] = useState([]);
-  const [unreadCounts, setUnreadCounts] = useState({});
-  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const selectedUser = useSelector((state) => state.message.selectedUser);
   const onlineUsers = useSelector(state => state.message.onlineUsers)
   // Fetch sidebar users
@@ -19,7 +17,7 @@ const Sidebar = () => {
       try {
         setIsUsersLoading(true);
         const res = await sideBarUsers();
-        setUsers(res.data.users.following);
+        setUsers(res.data.users);
       } catch (err) {
         console.error("Error fetching users:", err.message);
       } finally {
@@ -29,23 +27,7 @@ const Sidebar = () => {
     fetchUsers();
   }, []);
 
-  // Fetch unread messages count for all users
-  useEffect(() => {
-    const fetchUnreadCounts = async () => {
-      const counts = {};
-      for (const user of users) {
-        try {
-          const res = await getUnreadMessages(user._id);
-          counts[user._id] = res.data; // Assume `res.data` contains the unread count
-        } catch (err) {
-          console.error(`Error fetching unread count for user ${user._id}:`, err.message);
-        }
-      }
-      setUnreadCounts(counts);
-    };
 
-    if (users.length) fetchUnreadCounts();
-  }, [users]);
 
   // Handle user selection
   const setSelectedUserFn = (user) => {
@@ -62,17 +44,6 @@ const Sidebar = () => {
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
 
-        <div className="mt-3 hidden lg:flex items-center gap-2">
-          <label className="cursor-pointer flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={showOnlineOnly}
-              onChange={(e) => setShowOnlineOnly(e.target.checked)}
-              className="checkbox checkbox-sm"
-            />
-            <span className="text-sm">Show online only</span>
-          </label>
-        </div>
       </div>
 
       <div className="overflow-y-auto w-full py-3">
@@ -110,7 +81,7 @@ const Sidebar = () => {
         ))}
 
         {users.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No users found</div>
+          <div className="text-center text-zinc-500 py-4">Follow you Friends and start chating</div>
         )}
       </div>
     </aside>

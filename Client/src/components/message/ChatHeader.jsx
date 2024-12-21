@@ -1,30 +1,15 @@
 import { X } from "lucide-react";
 import { useSelector } from "react-redux";
-import {socket} from '../socket.js'
+import {socket} from '../../lib/socket.js'
 import { useEffect,useState } from "react";
 import { useDispatch } from "react-redux";
 import { setSelectedUser } from "../../app/Slices/messageSlice.js";
-
+import { Link } from "react-router-dom";
 const ChatHeader = () => {
   const selectedUser = useSelector(state => state.message.selectedUser) || []
   // const [onlineUser,setOnlineUser] = useState([])
   const dispatch = useDispatch()
   const onlineUser = useSelector(state => state?.message?.onlineUsers) || []
-  console.log(selectedUser._id)
-  console.log(onlineUser)
-  // useEffect(() => {
-  //   const handleOnlineUser = (data) => {
-  //     setOnlineUser(data);
-  //     console.log(data);
-  //   };
-  
-  //   socket.on('onlineUser', handleOnlineUser);
-  
-  //   // Cleanup function to remove the event listener when the component unmounts
-  //   return () => {
-  //     socket.off('onlineUser', handleOnlineUser);
-  //   };
-  // }, []);
 
   const cancleSelectedUser = () =>{
     dispatch(setSelectedUser(null))
@@ -37,7 +22,9 @@ const ChatHeader = () => {
           {/* Avatar */}
           <div className="">
             <div className="size-10 rounded-md relative">
+              <Link to={`/profile/${selectedUser?._id}`}>
               <img className="rounded-full" src={selectedUser?.avatar || "/avatar.png"} alt={selectedUser?.name} />
+              </Link>
             </div>
           </div>
 

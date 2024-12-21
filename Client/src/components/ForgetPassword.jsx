@@ -1,26 +1,21 @@
 import React, { useState } from "react";
 import { requestPasswordReset } from "../services/api";
 
-// import { useHistory } from "react-router-dom"; // If you want to redirect after successful submission
-
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-//   const history = useHistory(); // To redirect user after successful reset
 
-  // Handle email input change
   const handleChange = (e) => {
     setEmail(e.target.value);
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(""); // Reset message state
-    setError(""); // Reset error state
+    setMessage("");
+    setError("");
 
     if (!email) {
       setError("Email address is required");
@@ -29,50 +24,37 @@ const ForgetPassword = () => {
     }
 
     try {
-      // Example API call (replace with your actual API call)
-      const response = await requestPasswordReset(email).then(res => {
-          setMessage(res?.data.msg)
-        console.log(res)
-    }).catch(err => {
-        setError(err.response.data.msg)
-        setLoading(false)
-    })
-
-
-    //   if (data.success) {
-    //     setMessage("Password reset link sent to your email!");
-        // Optionally redirect to login page or stay on this page
-        // setTimeout(() => {
-        // //   history.push("/login"); // Redirect to login
-        // }, 3000);
-    //   } else {
-    //     setError(data.message || "Something went wrong");
-    //   }
+      await requestPasswordReset(email)
+        .then((res) => {
+          setMessage(res?.data.msg || "Password reset link sent.");
+        })
+        .catch((err) => {
+          setError(err.response?.data?.msg || "An error occurred.");
+        });
     } catch (err) {
-      console.error("Error:", err);
-      setError("An error occurred. Please try again later.");
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">Forgot Password</h2>
+    <div className="flex flex-col items-center justify-center max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Forgot Password</h2>
 
       {message && (
-        <div className="bg-green-100 text-green-800 p-2 rounded-md mb-4">
+        <div className="bg-green-100 text-green-800 p-3 rounded-md mb-4 text-sm text-center">
           {message}
         </div>
       )}
 
       {error && (
-        <div className="bg-red-100 text-red-800 p-2 rounded-md mb-4">
+        <div className="bg-red-100 text-red-800 p-3 rounded-md mb-4 text-sm text-center">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="w-full space-y-6">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email Address
@@ -81,7 +63,7 @@ const ForgetPassword = () => {
             type="email"
             id="email"
             name="email"
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter your email"
             value={email}
             onChange={handleChange}
@@ -89,21 +71,19 @@ const ForgetPassword = () => {
           />
         </div>
 
-        <div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md"
-            disabled={loading}
-          >
-            {loading ? "Sending..." : "Send Password Reset Link"}
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg text-base font-semibold hover:from-blue-600 hover:to-purple-600 transition"
+          disabled={loading}
+        >
+          {loading ? "Sending..." : "Send Password Reset Link"}
+        </button>
       </form>
 
-      <div className="mt-4 text-center">
+      <div className="mt-6 text-center text-sm">
         <p>
           Remembered your password?{" "}
-          <a href="/login" className="text-blue-500 hover:underline">
+          <a href="/login" className="text-gradient-to-r from-blue-500 to-purple-500 font-semibold hover:underline">
             Login here
           </a>
         </p>

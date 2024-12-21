@@ -31,21 +31,20 @@ const EditProfile = () => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append("name", fullName || user.name);
-        formData.append("userName", username || user.userName);
-        formData.append("bio", bio || user.bio);
+        formData.append("name", fullName );
+        formData.append("userName", username);
+        formData.append("bio", bio);
         formData.append("avatar", profilePicture);
 
 
         await updateUserProfile(formData)
             .then((res) => {
                 // dispatch(setUser(res.data))
-                console.log(res)
                 alert("User updated!")
             })
             .catch((err) => {
                 setError(err.response.data.msg)
-                    console.log(err)
+                    console.error(err)
 
             });
 
