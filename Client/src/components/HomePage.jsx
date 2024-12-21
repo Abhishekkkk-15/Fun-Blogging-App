@@ -30,11 +30,12 @@ const HomePage = () => {
         } else {
           setPosts((prevPosts) => [...prevPosts, ...newPosts]);
         }
+        setLoading(false);
+
       } catch (error) {
         setHasMore(false);
+        setLoading(true)
         console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
       }
     })();
   }, [page]);
