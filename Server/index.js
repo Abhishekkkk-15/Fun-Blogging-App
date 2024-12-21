@@ -10,7 +10,7 @@ import { app,server } from './lib/socket.js';
 config()
 
 app.use(cors({
-    origin: 'https://fun-blogging-app.vercel.app/', // Adjust this to your frontend URL
+    origin: 'https://fun-blogging-app.vercel.app', // Adjust this to your frontend URL
     credentials: true // Allow credentials (cookies)
 }))
 app.use(cookieParser())
