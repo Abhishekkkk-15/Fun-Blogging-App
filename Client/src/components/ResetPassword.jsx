@@ -25,10 +25,8 @@ const ResetPassword = () => {
     try {
       await resetPassword(token, password)
         .then((res) => {
-          if (res.data.success) {
             setSuccess(true);
             setTimeout(() => navigate("/login"), 2000); // Redirect to login after 2 seconds
-          }
         })
         .catch((err) => setError(err.response?.data?.message || "Something went wrong"));
     } catch (err) {
