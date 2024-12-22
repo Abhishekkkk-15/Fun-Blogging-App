@@ -7,7 +7,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
     cors: {
-        origin: ['https://fun-blogging-app.vercel.app','http://localhost:5173']
+        origin: 'https://fun-blogging-app.vercel.app'
     }
 })
 
