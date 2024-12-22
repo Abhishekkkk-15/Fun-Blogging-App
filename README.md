@@ -33,6 +33,6 @@ User Authentication: A simple and secure login system ensures that only register
 
 <h3>🖼️ Project Screenshots</h3>
 Here are some images showcasing the functionality and design of the app:
-<img src='./chat.png'/></img>
+<img src='./Chat.png'/></img>
 
 <img src='./homepage.png'/></img>
