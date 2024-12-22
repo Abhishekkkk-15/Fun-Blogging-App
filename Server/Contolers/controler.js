@@ -91,7 +91,7 @@ const logoutUser = async (req, res) => {
         res.clearCookie("accessToken", {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: 'None',
         });
         res.status(200).json({ msg: "User Logged Out!" });
     } catch (error) {

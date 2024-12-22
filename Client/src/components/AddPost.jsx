@@ -158,26 +158,26 @@ const AddPost = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+    <div className=" min-h-screen flex flex-col items-center p-4">
       <h1 className="text-2xl font-bold mb-4">Add New Post</h1>
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-md p-6 w-full max-w-2xl mb-10"
+        className=" rounded-lg shadow-md p-6 w-full max-w-2xl mb-10"
       >
         {/* Title Input */}
         <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-700">Title</label>
+          <label className="block text-sm font-semibold ">Title</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md mt-2"
+            className="w-full p-3 border  rounded-md mt-2"
             placeholder="Enter post title"
           />
         </div>
         {notLogged && (
           <span
-            className="bg-gray-400 h-8 w-36 text-white z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
+            className="bg-gray-400 h-8 w-36  z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
             role="alert"
           >
             Login First!!
@@ -185,12 +185,12 @@ const AddPost = () => {
         )}
         {/* Description Input */}
         <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-700">Description</label>
+          <label className="block text-sm font-semibold ">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows="4"
-            className="w-full p-3 border border-gray-300 rounded-md mt-2"
+            className="w-full p-3 border  rounded-md mt-2"
             placeholder="Enter post description"
           />
         </div>
@@ -201,7 +201,7 @@ const AddPost = () => {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md mt-2"
+            className="w-full p-3 border  rounded-md mt-2"
           >
             <option value="">Select a Category</option>
             {categories.map((cat, index) => (
@@ -214,7 +214,7 @@ const AddPost = () => {
 
         {/* Cover Image Upload */}
         <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-700">Cover Image</label>
+          <label className="block text-sm font-semibold ">Cover Image</label>
           <div className="flex items-center space-x-2">
             <input
               type="file"
@@ -239,7 +239,7 @@ const AddPost = () => {
                 <button
                   type="button"
                   onClick={() => setImagePreview(null)}
-                  className="absolute top-0 right-0 bg-white rounded-full p-1 text-red-500"
+                  className="absolute top-0 right-0  rounded-full p-1 text-red-500"
                 >
                   <FaTimes />
                 </button>

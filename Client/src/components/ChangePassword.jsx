@@ -29,8 +29,8 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto bg-gradient-to-br from-gray-100 to-gray-200 shadow-lg rounded-lg">
-      <h3 className="text-2xl font-semibold text-center text-gray-800 mb-6">Change Password</h3>
+    <div className="p-6 max-w-2xl mx-auto bg-gradient-to-br   shadow-lg rounded-lg">
+      <h3 className="text-2xl font-semibold text-center  mb-6">Change Password</h3>
 
       {success && (
         <div className="mb-4 p-3 text-center text-green-600 bg-green-100 rounded-md">
@@ -45,7 +45,7 @@ const ChangePassword = () => {
 
       <form onSubmit={handlePasswordChange} className="space-y-4">
         <div>
-          <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-600 mb-1">
+          <label htmlFor="currentPassword" className="block text-sm font-medium mb-1">
             Current Password
           </label>
           <input
@@ -59,7 +59,7 @@ const ChangePassword = () => {
         </div>
 
         <div>
-          <label htmlFor="newPassword" className="block text-sm font-medium text-gray-600 mb-1">
+          <label htmlFor="newPassword" className="block text-sm font-medium  mb-1">
             New Password
           </label>
           <input
@@ -73,7 +73,7 @@ const ChangePassword = () => {
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600 mb-1">
+          <label htmlFor="confirmPassword" className="block text-sm font-medium  mb-1">
             Confirm New Password
           </label>
           <input

@@ -78,10 +78,10 @@ const DetailsScreen = () => {
 
 
   return (
-    <div className="min-h-screen bg-white px-4 py-8 lg:flex lg:justify-between lg:space-x-6 lg:px-16">
+    <div className="min-h-screen  px-4 py-8 lg:flex lg:justify-between lg:space-x-6 lg:px-16">
     {notLogged && (
       <span
-        className="bg-gray-400 h-8 w-36 text-white z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
+        className="bg-gray-400 h-8 w-36  z-50 fixed ml-24 mt-20 text-center rounded-full transition ease-in-out duration-1000"
         role="alert"
       >
         Login First!!
@@ -123,14 +123,14 @@ const DetailsScreen = () => {
           }
         >
           <img
-            src={post?.author?.avatar || "https://via.placeholder.com/50"}
+            src={post?.author?.avatar || "https://tse3.mm.bing.net/th?id=OIP.3IsXMskZyheEWqtE3Dr7JwHaGe&pid=Api&P=0&h=220"}
             alt="Author"
             className="w-14 h-14 rounded-full border-2 border-purple-500"
           />
         </Link>
         <div>
-          <p className="font-bold text-gray-800 text-lg">{post?.author?.userName || "Unknown Author"}</p>
-          <div className="text-gray-500 text-sm flex flex-row">
+          <p className="font-bold  text-lg">{post?.author?.userName || "Unknown Author"}</p>
+          <div className="text-sm flex flex-row">
             {`${new Date(post?.createdAt).toLocaleDateString("en-US", {
               day: "2-digit",
               month: "short",
@@ -158,7 +158,7 @@ const DetailsScreen = () => {
   
       <div>
         {activeTab === "description" && (
-          <p className="text-gray-600 mb-9">
+          <p className=" mb-9">
             {post?.description || "Description not available."}
           </p>
         )}
@@ -168,7 +168,7 @@ const DetailsScreen = () => {
             <h2 className="text-lg font-semibold mb-2">Add Your Review</h2>
             <textarea
               placeholder="Your Review"
-              className="w-full border border-gray-300 rounded-lg p-2"
+              className="w-full border  rounded-lg p-2"
               rows="3"
               value={newReview}
               onChange={(e) => setNewReview(e.target.value)}
@@ -185,8 +185,8 @@ const DetailsScreen = () => {
                 <div key={review._id} className="flex items-start space-x-4 border-b py-4">
                   <img src={review.author?.avatar} alt={review.author?.userName} className="w-10 h-10 rounded-full" />
                   <div>
-                    <h3 className="font-semibold text-gray-700">{review.author?.userName}</h3>
-                    <p className="text-gray-600">{review.content}</p>
+                    <h3 className="font-semibold">{review.author?.userName}</h3>
+                    <p className="">{review.content}</p>
                   </div>
                 </div>
               ))}

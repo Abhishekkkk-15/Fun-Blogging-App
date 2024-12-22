@@ -37,8 +37,8 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
+    <div className="min-h-screen flex items-center justify-center ">
+      <div className="w-full max-w-md p-8  shadow-md rounded-lg">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Reset Password</h2>
 
         {success ? (
@@ -62,13 +62,13 @@ const ResetPassword = () => {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-2 p-3 w-full border  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium ">
                 Confirm New Password
               </label>
               <input
@@ -76,7 +76,7 @@ const ResetPassword = () => {
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mt-2 p-3 w-full border  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>

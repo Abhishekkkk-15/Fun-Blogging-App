@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../services/api";
-
+import { Link } from "react-router-dom";
 const Register = () => {
-  const [theme, setTheme] = useState("light");
   const [error, setError] = useState('')
   const navigate = useNavigate();
   const [regDetail, setRegDetail] = useState({
@@ -13,12 +12,6 @@ const Register = () => {
     password: "",
   });
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
-  }, []);
 
 
   // Handle input changes
@@ -56,17 +49,18 @@ const Register = () => {
   };
 
   return (
+    
     <div
-      className={`min-h-screen mb-12 ${theme === "light" ? "bg-gray-100" : "bg-gray-800"
-        } flex flex-col items-center justify-center p-4`}
+      className={`min-h-screen mb-12 $ flex flex-col items-center justify-center p-4`}
     >
+      <Link to='/theme' >
+      <img src='/theme.png' className='float-right ml-80 cursor-pointer' />
+       </Link>
       <div
-        className={`w-full max-w-lg p-6 ${theme === "light" ? "bg-white" : "bg-gray-700"
-          } rounded-lg shadow-lg`}
+        className={`w-full max-w-lg p-6  rounded-lg shadow-lg`}
       >
         <h2
-          className={`text-center text-2xl font-semibold ${theme === "light" ? "text-gray-800" : "text-white"
-            } mb-6`}
+          className={`text-center text-2xl font-semibold  mb-6`}
         >
           Register
         </h2>
@@ -91,7 +85,7 @@ const Register = () => {
               name="name"
               value={regDetail.name}
               onChange={handleChange}
-              className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 mt-1 border  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your name"
               required
             />
@@ -101,7 +95,7 @@ const Register = () => {
           <div>
             <label
               htmlFor="userName"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium  "
             >
               Username
             </label>
@@ -111,7 +105,7 @@ const Register = () => {
               name="userName"
               value={regDetail.userName}
               onChange={handleChange}
-              className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your unique username"
               required
             />
@@ -121,7 +115,7 @@ const Register = () => {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium "
             >
               Email
             </label>
@@ -131,7 +125,7 @@ const Register = () => {
               name="email"
               value={regDetail.email}
               onChange={handleChange}
-              className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 mt-1 border  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
               required
             />
@@ -141,7 +135,7 @@ const Register = () => {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="block text-sm font-medium"
             >
               Password
             </label>
@@ -151,7 +145,7 @@ const Register = () => {
               name="password"
               value={regDetail.password}
               onChange={handleChange}
-              className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 mt-1 border  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Create a new password"
               required
             />

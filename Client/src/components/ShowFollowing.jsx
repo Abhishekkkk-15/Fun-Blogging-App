@@ -27,29 +27,29 @@ const ShowFollowing = ({ userId }) => {
 
   return (
     <div className="p-4">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Following</h2>
+      <h2 className="text-3xl font-bold  mb-6">Following</h2>
       {following.length > 0 ? (
         <div>
           {following.map((user) => (
             <Link
               key={user._id}
               to={`/profile/${user._id}`}
-              className="flex items-center mb-6 p-4 bg-white shadow-md rounded-lg hover:shadow-xl transition-all duration-300"
+              className="flex items-center mb-6 p-4  shadow-md rounded-lg hover:shadow-xl transition-all duration-300"
             >
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="w-16 h-16 rounded-full border-4 border-gray-200 mr-4"
+                className="w-16 h-16 rounded-full border-4  mr-4"
               />
               <div>
-                <p className="font-semibold text-lg text-gray-800">{user.name}</p>
-                <p className="text-xs text-gray-500">@{user.userName}</p>
+                <p className="font-semibold text-lg ">{user.name}</p>
+                <p className="text-xs ">@{user.userName}</p>
               </div>
             </Link>
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500">You are not following anyone yet.</p>
+        <p className="text-center ">You are not following anyone yet.</p>
       )}
     </div>
   );

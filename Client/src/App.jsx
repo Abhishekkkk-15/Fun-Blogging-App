@@ -24,11 +24,13 @@ import ShowFollowing from './components/ShowFollowing';
 import Account from './components/Account';
 import ChangePassword from './components/ChangePassword';
 import AboutUs from './components/AboutUs';
+import ThemeSelector from './components/ThemeSelector.jsx';
 
 function App() {
   const dispatch = useDispatch()
   const [userId, setUserId] = useState('')
   const user = useSelector(state => state.user.userData)
+  const theme = useSelector(state => state.user.theme)
   useEffect(() => {
     let isMounted = true; // Track if component is still mounted
 
@@ -76,7 +78,7 @@ function App() {
   }, [userId,dispatch]);
 
   return (
-    <div className="bg-[#fefefe] min-h-screen">
+    <div className="min-h-screen" data-theme={theme}>
       <Router>
         <Routes>  
           <Route path="/" element={<HomePage />} />
@@ -96,6 +98,7 @@ function App() {
           <Route path="/following" element={ user?._id ? <ShowFollowing /> : <Login/>} />
           <Route path="/change-password" element={ user?._id ? <ChangePassword /> : <Login/>} />
           <Route path="/aboutus" element={ user?._id ? <AboutUs /> : <Login/>} />
+          <Route path="/theme" element={ <ThemeSelector />} />
         </Routes>
         <BottomNavbar />
       </Router>

@@ -64,24 +64,24 @@ const DiscoverScreen = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-full pb-16 p-6 w-full">
+    <div className=" min-h-full pb-16 p-6 w-full">
       <h1 className="text-2xl font-bold">Let's Discover</h1>
       <div className="mt-4 relative">
         <input
           type="text"
           placeholder="Search for users or blogs"
-          className="w-full p-3 rounded-lg border border-gray-300"
+          className="w-full p-3 rounded-lg border "
           value={usersearch}
           onChange={handleInputChange}
         />
         {isLoading && (
-          <i className="fa-solid fa-spinner fa-spin absolute right-4 top-4 text-gray-500"></i>
+          <i className="fa-solid fa-spinner fa-spin absolute right-4 top-4 "></i>
         )}
       </div>
 
       {/* Categories Section */}
       <div className="mt-4 overflow-auto">
-        <h2 className="font-semibold mb-2">Categories</h2>
+        <h2 className="font-semibold mb-2">Top Categories</h2>
         <div className="flex space-x-4">
           {categories.map((category, index) => (
             <div key={index} className="flex flex-col items-center space-y-2">
@@ -115,10 +115,10 @@ const DiscoverScreen = () => {
                       
                       <div
                         key={index}
-                        className="flex items-center space-x-4 bg-white p-3 rounded-lg shadow-md mb-5 overflow-hidden"
+                        className="flex items-center space-x-4  p-3 rounded-lg shadow-md mb-5 overflow-hidden"
                       ><Link to={`/profile/${result?._id}`}>
                         <img
-                          src={result.avatar}
+                          src={result.avatar || 'https://tse3.mm.bing.net/th?id=OIP.3IsXMskZyheEWqtE3Dr7JwHaGe&pid=Api&P=0&h=220'}
                           alt={result.userName}
                           className="w-12 h-12 rounded-full"
                         />
@@ -127,7 +127,7 @@ const DiscoverScreen = () => {
                           <h3 className="text-lg font-semibold">
                             {result.userName}
                           </h3>
-                          <p className="text-sm text-gray-500">{result.name}</p>
+                          <p className="text-sm ">{result.name}</p>
                         </div>
                       </div>
                     );
@@ -158,7 +158,7 @@ const DiscoverScreen = () => {
             </div>
           </>
         ) : (
-          <p className="text-sm text-gray-500">No results found.</p>
+          <p className="text-sm ">No results found.</p>
         )}
       </div>
     </div>

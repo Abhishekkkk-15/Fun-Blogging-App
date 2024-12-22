@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  userData:  [],
+  userData: [],
   isLoggedIn: false,
+  theme: localStorage.getItem('theme'),
 };
 
 export const userSlice = createSlice({
@@ -23,8 +24,12 @@ export const userSlice = createSlice({
       localStorage.removeItem('userData');
       localStorage.removeItem('isLoggedIn');
     },
+    setTheme: (state, action) => {
+      state.theme = action.payload;
+      localStorage.setItem("theme", action.payload);
+    },
   },
-});
+  });
 
-export const { setUser, setLoggedIn, clearUser } = userSlice.actions;
+export const { setUser, setLoggedIn, clearUser,setTheme } = userSlice.actions;
 export default userSlice.reducer;

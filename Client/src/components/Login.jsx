@@ -7,6 +7,7 @@ import { setLoggedIn, setUser } from '../app/Slices/userSlice';
 import { Link, useLocation, useNavigate } from 'react-router-dom'; 
 import UserProfile from './UserProfile';
 import { socket } from '../lib/socket.js';
+// import theme from '/theme';
 
 export default function Login() {
   const [userId, setUserId] = useState('');
@@ -47,19 +48,20 @@ export default function Login() {
   }
 
 
-  return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  return (<>
+  
+    <div className=" min-h-screen flex items-center justify-center p-6">
       {/* Login Card */}
-      <div className="w-full max-w-md md:max-w-lg bg-white rounded-xl shadow-lg p-8">
+      <div className="w-full max-w-md md:max-w-lg  rounded-xl shadow-lg p-8">
         {/* Title */}
-        {<h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-6">
+        {<h2 className="text-2xl md:text-3xl font-bold  text-center mb-6">
           {location?.state ?   'Login First' :"Welcome Back"}
         </h2>}
-        <p className="text-gray-500 text-center mb-8">Login to continue exploring!</p>
+        <p className="-500 text-center mb-8">Login to continue exploring!</p>
 
         {/* Email Input */}
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor="email">
+          <label className="block font-medium mb-2" htmlFor="email">
             Email Address
           </label>
           <input
@@ -68,13 +70,13 @@ export default function Login() {
             value={userId}
             placeholder="Enter your email"
             onChange={(e) => setUserId(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            className="w-full px-4 py-2 border  rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none"
           />
         </div>
 
         {/* Password Input */}
         <div className="mb-6">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor="password">
+          <label className="block  font-medium mb-2" htmlFor="password">
             Password
           </label>
           <input
@@ -83,7 +85,7 @@ export default function Login() {
             type="password"
             placeholder="Enter your password"
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            className="w-full px-4 py-2 border  rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none"
           />
         </div>
 
@@ -103,7 +105,7 @@ export default function Login() {
           {loading ? (
             <span className="flex justify-center items-center">
               <svg
-                className="animate-spin h-5 w-5 mr-2 text-white"
+                className="animate-spin h-5 w-5 mr-2 "
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -138,14 +140,14 @@ export default function Login() {
 
         {/* Or Divider */}
         <div className="flex items-center my-6">
-          <hr className="flex-grow border-gray-300" />
-          <span className="px-4 text-gray-500">OR</span>
-          <hr className="flex-grow border-gray-300" />
+          <hr className="flex-grow " />
+          <span className="px-4">OR</span>
+          <hr className="flex-grow " />
         </div>
 
         {/* Sign Up Link */}
         <div className="text-center mt-6">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm ">
             Don't have an account?{' '}
             <Link to="/signup" className="text-purple-500 hover:text-blue-500 focus:text-purple-500 mt-2 text-sm transition">
               Sign Up
@@ -154,5 +156,6 @@ export default function Login() {
         </div>
       </div>
     </div>
+    </>
   );
 }

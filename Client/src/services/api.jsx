@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Set the base URL for the API
 axios.defaults.baseURL = 'https://fun-blogging-app.onrender.com/fun-blog'; 
+// axios.defaults.baseURL = 'http://localhost:8000/fun-blog'; 
 
 export const getBlogs = (page,limit) => axios.get(
     "/all-blogs",

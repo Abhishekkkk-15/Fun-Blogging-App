@@ -39,7 +39,7 @@ const ForgetPassword = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+    <div className="flex flex-col items-center justify-center max-w-md mx-auto  p-8 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Forgot Password</h2>
 
       {message && (
@@ -63,7 +63,7 @@ const ForgetPassword = () => {
             type="email"
             id="email"
             name="email"
-            className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-2 p-3 w-full border  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter your email"
             value={email}
             onChange={handleChange}
@@ -73,7 +73,7 @@ const ForgetPassword = () => {
 
         <button
           type="submit"
-          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg text-base font-semibold hover:from-blue-600 hover:to-purple-600 transition"
+          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500  rounded-lg text-base font-semibold hover:from-blue-600 hover:to-purple-600 transition"
           disabled={loading}
         >
           {loading ? "Sending..." : "Send Password Reset Link"}

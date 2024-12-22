@@ -7,8 +7,8 @@ const Account = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-gradient-to-br from-gray-100 to-gray-200 shadow-lg rounded-lg">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Account Settings</h2>
+    <div className="p-6 max-w-3xl mx-auto bg-gradient-to-br   shadow-lg rounded-lg">
+      <h2 className="text-3xl font-bold text-center -800 mb-8">Account Settings</h2>
 
       {userInfo && (
         <div className="flex flex-col items-center mb-10">
@@ -17,7 +17,7 @@ const Account = () => {
             alt={userInfo.name}
             className="w-24 h-24 rounded-full border-4 border-blue-500 mb-4"
           />
-          <div className="text-lg text-gray-800 text-center space-y-2">
+          <div className="text-lg -800 text-center space-y-2">
             <p>
               <span className="font-semibold">Name: </span>{userInfo.name}
             </p>

@@ -19,7 +19,6 @@ const HomePage = () => {
   useEffect(() => {
     if (!hasMore) return;
     (async () => {
-      
       try {
         setLoading(true);
         const response = await getBlogs(page, 4);
@@ -31,13 +30,12 @@ const HomePage = () => {
           setPosts((prevPosts) => [...prevPosts, ...newPosts]);
         }
         setLoading(false);
-
       } catch (error) {
         setHasMore(false);
-        setLoading(true)
+        setLoading(true);
         console.error("Error fetching posts:", error);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     })();
   }, [page]);
@@ -66,7 +64,9 @@ const HomePage = () => {
         try {
           const response = await getNotifications();
           setNotifications(response.data.userNotification);
-          const unread = response.data.userNotification.filter((notif) => !notif.isRead).length;
+          const unread = response.data.userNotification.filter(
+            (notif) => !notif.isRead
+          ).length;
           setUnreadCount(unread);
         } catch (error) {
           console.error("Error fetching notifications:", error);
@@ -90,18 +90,21 @@ const HomePage = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen pb-16 p-6 relative">
+    <div className=" min-h-screen pb-16 p-6 relative">
       {/* Header with Notifications */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
-        <img src="/DALL·E 2024-12-21 23.17.36 - A vibrant and playful logo for a fun blogging app. The design features a colorful pen or pencil stylized into a smiling character, surrounded by brigh.webp" className="h-8 rounded-lg" />
-        <h1 className="text-2xl font-bold">Fun-BLog</h1>
+          <img
+            src="/DALL·E 2024-12-21 23.17.36 - A vibrant and playful logo for a fun blogging app. The design features a colorful pen or pencil stylized into a smiling character, surrounded by brigh.webp"
+            className="h-8 rounded-lg"
+          />
+          <h1 className="text-2xl font-bold">Fun-BLog</h1>
         </div>
         <Menu as="div" className="relative">
           <Menu.Button className="relative flex items-center text-gray-700">
             <FaBell className="text-2xl" />
             {unreadCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
+              <span className="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full px-2">
                 {unreadCount}
               </span>
             )}
@@ -111,41 +114,45 @@ const HomePage = () => {
               <div className="p-4 max-h-72 overflow-scroll">
                 <h3 className="text-sm font-semibold mb-2">Notifications</h3>
                 {notifications.length > 0 ? (
-                  notifications.slice().reverse().map((notif, index) => (
-                    <div
-                      key={index}
-                      className={`p-2 rounded-md ${
-                        notif.isRead ? "bg-gray-100" : "bg-blue-100"
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2">
-                        {notif.sender?.avatar && (
-                          <Link to={`/profile/${notif.sender._id}`}>
-                            <img
-                              src={notif.sender.avatar}
-                              alt={`${notif.sender.userName}'s avatar`}
-                              className="w-8 h-8 rounded-full"
-                            />
-                          </Link>
-                        )}
-                        <div className="text-sm">
-                          <strong>{notif.sender?.userName}</strong> {notif.type}{" "}
-                          {notif.blog ? (
-                            <Link to={`/details/${notif.blog._id}`}>
-                              <p>{notif.blog.title.slice(0, 28)}.....</p>
+                  notifications
+                    .slice()
+                    .reverse()
+                    .map((notif, index) => (
+                      <div
+                        key={index}
+                        className={`p-2 rounded-md ${
+                          notif.isRead ? "bg-gray-100" : "bg-blue-100"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          {notif.sender?.avatar && (
+                            <Link to={`/profile/${notif.sender._id}`}>
+                              <img
+                                src={notif.sender.avatar}
+                                alt={`${notif.sender.userName}'s avatar`}
+                                className="w-8 h-8 rounded-full"
+                              />
                             </Link>
-                          ) : (
-                            "your profile"
                           )}
+                          <div className="text-sm">
+                            <strong>{notif.sender?.userName}</strong>{" "}
+                            {notif.type}{" "}
+                            {notif.blog ? (
+                              <Link to={`/details/${notif.blog._id}`}>
+                                <p>{notif.blog.title.slice(0, 28)}.....</p>
+                              </Link>
+                            ) : (
+                              "your profile"
+                            )}
+                          </div>
                         </div>
+                        <span className="text-xs">
+                          {new Date(notif.createdAt).toLocaleString()}
+                        </span>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {new Date(notif.createdAt).toLocaleString()}
-                      </span>
-                    </div>
-                  ))
+                    ))
                 ) : (
-                  <p className="text-sm text-gray-500">No notifications</p>
+                  <p className="text-sm">No notifications</p>
                 )}
               </div>
               <button
@@ -160,17 +167,14 @@ const HomePage = () => {
       </div>
 
       {/* Posts */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
         {posts.map((post, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
-          >
+          <div key={index} className="rounded-lg shadow-md overflow-hidden">
             <Link to={`/details/${post?._id}`}>
               <img
                 src={post?.coverImage}
                 alt={post?.title}
-                className="h-40 w-full object-cover"
+                className="h-48 w-full object-cover"
               />
             </Link>
             <div className="p-4">
@@ -193,7 +197,7 @@ const HomePage = () => {
                 </span>
               </div>
               <h3 className="text-xl font-semibold mt-2">{post?.title}</h3>
-              <p className="text-gray-600 mt-2 text-sm">
+              <p className="mt-2 text-sm">
                 {post?.description.slice(0, 100)}...
               </p>
               <Link to={`/details/${post?._id}`}>
@@ -208,12 +212,9 @@ const HomePage = () => {
 
       {/* Loading Indicator */}
       {loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-pulse">
           {[...Array(4)].map((_, index) => (
-            <div
-              key={index}
-              className="bg-gray-300 rounded-lg shadow-md overflow-hidden"
-            >
+            <div key={index} className="rounded-lg shadow-md overflow-hidden">
               <div className="h-40 w-full bg-gray-200"></div>
               <div className="p-4 space-y-2">
                 <div className="flex items-center space-x-3">

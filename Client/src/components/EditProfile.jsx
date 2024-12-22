@@ -51,8 +51,8 @@ const EditProfile = () => {
     };
 
     return (
-        <div className="max-w-lg mx-auto mt-8 p-6 bg-white shadow-md rounded-lg mb-16">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+        <div className="max-w-lg mx-auto mt-8 p-6  shadow-md rounded-lg mb-16">
+            <h2 className="text-2xl font-semibold  mb-6 text-center">
                 Edit Profile
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -88,7 +88,7 @@ const EditProfile = () => {
 
                 {/* Full Name */}
                 <div>
-                    <label htmlFor="fullName" className="block text-gray-700 font-medium">
+                    <label htmlFor="fullName" className="block  font-medium">
                         Full Name
                     </label>
                     <input
@@ -96,14 +96,14 @@ const EditProfile = () => {
                         id="fullName"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full mt-2 px-4 py-2 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder={user.name || "Full Name"}
                     />
                 </div>
 
                 {/* Username */}
                 <div>
-                    <label htmlFor="username" className="block text-gray-700 font-medium">
+                    <label htmlFor="username" className="block  font-medium">
                         Username
                     </label>
                     <input
@@ -111,21 +111,21 @@ const EditProfile = () => {
                         id="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full mt-2 px-4 py-2 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder={user.userName || "Username"}
                     />
                 </div>
 
                 {/* Bio */}
                 <div>
-                    <label htmlFor="bio" className="block text-gray-700 font-medium">
+                    <label htmlFor="bio" className="block  font-medium">
                         Bio
                     </label>
                     <textarea
                         id="bio"
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
-                        className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full mt-2 px-4 py-2 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder={user.bio || "Write your bio here..."}
                         rows="3"
                     ></textarea>

@@ -74,13 +74,13 @@ export default function UserProfile({ log }) {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+    <div className=" min-h-screen flex flex-col items-center p-4 ">
       {/* Top Section */}
       <div className="flex justify-end items-center w-full px-4">
         {/* Menu Dropdown */}
         <Menu as="div" className="relative inline-block text-left">
-          <Menu.Button className="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full focus:outline-none">
-            <HiDotsVertical className="text-gray-600 text-xl" />
+          <Menu.Button className="flex items-center justify-center w-8 h-8  rounded-full focus:outline-none">
+            <HiDotsVertical className=" text-xl" />
           </Menu.Button>
           <Transition
             enter="transition ease-out duration-100"
@@ -90,11 +90,11 @@ export default function UserProfile({ log }) {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Items className="absolute right-0 mt-2 w-40 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <Link to="/account"
-                    className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm text-gray-700`}
+                    className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm `}
                   >
                     Account
                   </Link>
@@ -103,7 +103,7 @@ export default function UserProfile({ log }) {
               <Menu.Item>
                 {({ active }) => (
                   <Link to="/aboutus"
-                    className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm text-gray-700`}
+                    className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm `}
                   >
                     About us
                   </Link>
@@ -117,6 +117,15 @@ export default function UserProfile({ log }) {
                   >
                     Sign Out
                   </button>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <Link to="/theme"
+                    className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm `}
+                  >
+                    theme's
+                  </Link>
                 )}
               </Menu.Item>
             </Menu.Items>
