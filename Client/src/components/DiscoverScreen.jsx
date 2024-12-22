@@ -98,7 +98,7 @@ const DiscoverScreen = () => {
       </div>
 
       {/* Search Results Section */}
-      <div className="mt-6 h-96 overflow-scroll">
+      <div className="mt-6  overflow-scroll">
         {searchResults.length > 0 ? (
           <>
             <h2 className="font-semibold mb-4">Search Results</h2>
