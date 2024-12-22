@@ -79,7 +79,7 @@ export default function ProfileComponent() {
 )}
         <div className="relative">
           <img
-            src={user?.avatar}
+            src={user?.avatar || 'https://tse3.mm.bing.net/th?id=OIP.3IsXMskZyheEWqtE3Dr7JwHaGe&pid=Api&P=0&h=220'}
             alt="Profile"
             className="w-24 h-24 md:w-28 md:h-28 rounded-full mx-auto"
           />

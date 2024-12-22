@@ -22,7 +22,7 @@ const HomePage = () => {
       
       try {
         setLoading(true);
-        const response = await getBlogs(page, );
+        const response = await getBlogs(page, 4);
         const newPosts = response.data.data;
 
         if (response.data.totalPage === response.data.currentPage) {
@@ -36,6 +36,8 @@ const HomePage = () => {
         setHasMore(false);
         setLoading(true)
         console.error("Error fetching posts:", error);
+      }finally{
+        setLoading(false)
       }
     })();
   }, [page]);
@@ -91,7 +93,10 @@ const HomePage = () => {
     <div className="bg-gray-100 min-h-screen pb-16 p-6 relative">
       {/* Header with Notifications */}
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Home</h1>
+        <div className="flex items-center space-x-2">
+        <img src="/DALL·E 2024-12-21 23.17.36 - A vibrant and playful logo for a fun blogging app. The design features a colorful pen or pencil stylized into a smiling character, surrounded by brigh.webp" className="h-8 rounded-lg" />
+        <h1 className="text-2xl font-bold">Fun-BLog</h1>
+        </div>
         <Menu as="div" className="relative">
           <Menu.Button className="relative flex items-center text-gray-700">
             <FaBell className="text-2xl" />

@@ -45,7 +45,7 @@ const DetailsScreen = () => {
     }
 
     await addComment(blogId, content).then((res) => {
-      setReviews([...reviews, res.data.data]);
+      setReviews([...reviews, res.data.comment]);
       setNewReview('')
 
     }).catch((error) => console.error(error))

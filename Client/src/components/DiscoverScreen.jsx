@@ -40,7 +40,7 @@ const DiscoverScreen = () => {
   };
 
   const categories = [
-    { name: "Technology", img: "https://tse1.mm.bing.net/th?id=OIP.89uvk8TA6-reQ7koKTfAwwHaEX&pid=Api&P=0&h=220" },
+    { name: "Motivation", img: "https://tse4.mm.bing.net/th?id=OIP.GmX9SVb15pAQYm1yz77vXQHaHa&pid=Api&P=0&h=220" },
     { name: "Anime", img: "https://tse3.mm.bing.net/th?id=OIP.EZ4DWvPlOVlzLuw69-LHgAHaFj&pid=Api&P=0&h=220" },
     { name: "Lifestyle", img: "https://tse3.mm.bing.net/th?id=OIP.Iq83AeAAQlexww07VBVWMQHaEK&pid=Api&P=0&h=220" },
     { name: "Health", img: "https://tse3.mm.bing.net/th?id=OIP.ioXXQsNT91yIiKapkewCfgHaF7&pid=Api&P=0&h=220" },

@@ -127,7 +127,7 @@ export default function UserProfile({ log }) {
       {/* Profile Section */}
       <div className="text-center mt-6">
         <img
-          src={user?.avatar || 'https://via.placeholder.com/150'}
+          src={user?.avatar || 'https://tse3.mm.bing.net/th?id=OIP.3IsXMskZyheEWqtE3Dr7JwHaGe&pid=Api&P=0&h=220'}
           alt="Profile"
           className="w-24 h-24 rounded-full mx-auto"
         />

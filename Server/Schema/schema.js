@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const userSchema = new Schema({
     avatar:{
         type:String,
-        default:'https://via.placeholder.com/150'
+        default:'https://tse3.mm.bing.net/th?id=OIP.3IsXMskZyheEWqtE3Dr7JwHaGe&pid=Api&P=0&h=220'
     },
     name:{
         type:String,
