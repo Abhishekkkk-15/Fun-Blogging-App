@@ -98,7 +98,7 @@ const HomePage = () => {
             src="/DALL·E 2024-12-21 23.17.36 - A vibrant and playful logo for a fun blogging app. The design features a colorful pen or pencil stylized into a smiling character, surrounded by brigh.webp"
             className="h-8 rounded-lg"
           />
-          <h1 className="text-2xl font-bold">Fun-BLog</h1>
+          <h1 className="text-2xl font-bold">Fun-Blog</h1>
         </div>
         <Menu as="div" className="relative">
           <Menu.Button className="relative flex items-center text-gray-700">
@@ -174,7 +174,7 @@ const HomePage = () => {
               <img
                 src={post?.coverImage}
                 alt={post?.title}
-                className="h-48 w-full object-cover"
+                className="h-56 w-full object-cover"
               />
             </Link>
             <div className="p-4">

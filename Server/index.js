@@ -11,6 +11,7 @@ config()
 
 app.use(cors({
     origin: 'https://fun-blogging-app.vercel.app', // Adjust this to your frontend URL
+    // origin: 'http://localhost:5173',
     credentials: true // Allow credentials (cookies)
 }))
 app.use(cookieParser())

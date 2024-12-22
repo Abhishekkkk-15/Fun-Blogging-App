@@ -90,13 +90,22 @@ export default function UserProfile({ log }) {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 mt-2 bg-base w-40 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Items className="absolute bg-base-100 right-0 mt-2 bg-base w-40 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <Link to="/account"
                     className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm `}
                   >
                     Account
+                  </Link>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <Link to="/theme"
+                    className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm `}
+                  >
+                    theme's
                   </Link>
                 )}
               </Menu.Item>
@@ -109,6 +118,7 @@ export default function UserProfile({ log }) {
                   </Link>
                 )}
               </Menu.Item>
+
               <Menu.Item>
                 {({ active }) => (
                   <button
@@ -119,15 +129,7 @@ export default function UserProfile({ log }) {
                   </button>
                 )}
               </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <Link to="/theme"
-                    className={`${active ? 'bg-gray-100' : ''} group flex rounded-md items-center w-full px-4 py-2 text-sm `}
-                  >
-                    theme's
-                  </Link>
-                )}
-              </Menu.Item>
+              
             </Menu.Items>
           </Transition>
         </Menu>
@@ -208,12 +210,12 @@ export default function UserProfile({ log }) {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute  right-0 mt-2 w-32 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute  right-0 mt-2 w-32 bg-base-300 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item>
                         {({ active }) => (
                           <button
                             onClick={() => shareContent(post?._id)}
-                            className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm text-gray-700`}
+                            className={`${active ? 'bg-gray-100' : ''} flex items-center w-full px-4 py-2 text-sm`}
                           >
                             Share
                           </button>
