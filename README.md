@@ -35,4 +35,4 @@ User Authentication: A simple and secure login system ensures that only register
 Here are some images showcasing the functionality and design of the app:
 <img src='./Chat.png'/ heigth="600px" width="70%"></img>
 
-<img src='./homepage.png'/></img>
+<img src='./homepage.png' heigth="700px" width="70%" /></img>
